@@ -143,11 +143,11 @@ configs:
                 #    /nick <player> <name>, permet de changer le pseudo de quelqu'un
                 #    Type: Modération, Fun
                 cmd-nick-other: cmd.nick-other
-        list:
+        # list:
             #    Module non Terminé
             #    Active ou désactive le contrôle du /nick, MODULE NON TERMINÉ, ne sert à rien d'activer
-            module-list: false
+            # module-list: false
             
-            permissions:
+            # permissions:
                 #    /list, commande pour afficher la liste des joueurs
-                cmd-list: cmd.list
+                # cmd-list: cmd.list
