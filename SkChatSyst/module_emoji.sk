@@ -1,0 +1,238 @@
+
+options:
+	prefix: "SkUltimateChat"
+	prefix-msg: "%{SkUltimateChat-commandes-prefix}%"
+	perms: "%{SkUltimateChat-permisssions-prefix}%"
+#
+
+#	loaded 	= pack activées
+#	chat	= chat définis sur émojis
+#	enable	= emoji mode on, mais pas forcément loaded donc pas chat
+
+#	Function by Snow-Pyon
+function packetRPSend(player: player, url: text, hash: text = ""):
+    set {_packet} to new play_server_resource_pack_send packet
+    set string pinfo 0 of {_packet} to {_url}
+    if {_hash} = "":
+        set string pinfo 1 of {_packet} to ("%hashed {_url} using ""SHA-1""%") #Need of SkUtilities.
+    send {_player} packet {_packet}
+#
+
+on packet recieve:
+	if event-string is "PacketPlayInResourcePackStatus":
+		set {_player} to event-player
+		set {_status} to packet field "status"
+		if "%{_status}%" = "SUCCESSFULLY_LOADED":
+			send "{@prefix} <gold>Émojies &2chargées." to {_player}
+			set {{@prefix}.emoji.chat.%player%} to true
+			set {{@prefix}.emoji.loaded.%player%} to true
+		else if "%{_status}%" = "DECLINED":
+			send "{@prefix} <light red>Erreur de chargement des émojis." to {_player}
+			
+#
+
+on join:
+	if {{@prefix}.emoji.enable.%player%} is true:
+		packetRPSend(player, "https://www.dropbox.com/s/jjnuiuu70lngxmt/PWTG_Pack.zip?dl=0", "3672848e74ebe0f3b00ad28201f74693afca9af8")
+#
+on quit:
+	delete {{@prefix}.emoji.loaded.%player%}
+	delete {{@prefix}.emoji.chat.%player%}
+#
+
+
+command /emoji [<text>]:
+	description: "Change vos préférances d'Emoji!"
+	trigger:
+		if {{@prefix}.emoji.module-emoji} is not true:
+			stop trigger
+		else if arg 1 is not set:
+			send "&6--&2 Emoji &6--"
+			send "&a/emoji &e<on / off / mode>"
+			send "&eon&c: &fActive les emojis"
+			send "&eoff&c: &fDésactive les emojis"
+			send "&emode&c: &fActive/Désactive les emoji à chaque connexions"
+			if {{@prefix}.emoji.loaded.%player%} is true:
+				if {{@prefix}.emoji.emoji-list} is true:
+					send "&eliste&c: &fAffiche la liste des émojis &c& &fpermet de les utiliser"
+					send "   &c→→→ pour voir la liste il faut avoir les emoji &a[ON]&c←←←"
+		else if arg 1 is "on":
+			if {{@prefix}.emoji.wait.%player%} is true:
+				send "&cMerci de patienter un peu avant de faire cette commande !"
+				stop trigger
+			set {{@prefix}.emoji.chat.%player%} to true
+			if {{@prefix}.emoji.loaded.%player%} is not set:
+				packetRPSend(player, "https://www.dropbox.com/s/jjnuiuu70lngxmt/PWTG_Pack.zip?dl=0", "3672848e74ebe0f3b00ad28201f74693afca9af8")
+			set {{@prefix}.emoji.loaded.%player%} to true
+			send "{@prefix-msg} &rVous avez activé les émojis, /emoji liste pour voir la liste."
+			ChatSendFull(player)
+			set {{@prefix}.emoji.wait.%player%} to true
+			wait 30 seconds
+			delete {{@prefix}.emoji.wait.%player%}
+		else if arg 1 is "off":
+			if {{@prefix}.emoji.wait.%player%} is true:
+				send "&cMerci de patienter un peu avant de faire cette commande !"
+				stop trigger
+			delete {{@prefix}.emoji.chat.%player%}
+			send "{@prefix-msg} &rVous avez désactivé les émojis."
+			ChatSendFull(player)
+			set {{@prefix}.emoji.wait.%player%} to true
+			wait 30 seconds
+			delete {{@prefix}.emoji.wait.%player%}
+		else if arg 1 is "mode":
+			if {{@prefix}.emoji.enable.%player%} is true:
+				delete {{@prefix}.emoji.enable.%player%}
+				send "{@prefix-msg} &cEmoji désactivé lors de votre prochainne connexion !"
+				send "{@prefix-msg} &cPour les désactiver dès maintenant &e/emoji off"
+			else:
+				set {{@prefix}.emoji.enable.%player%} to true
+				send "{@prefix-msg} &aLes emoji seronts activées à votre prochainne connexion !"
+				send "{@prefix-msg} &2Pour les activer dès maintenant &e/emoji on"
+		else if arg 1 is "liste" or "list":
+			if {{@prefix}.emoji.emoji-list} is true:
+				if {{@prefix}.emoji.loaded.%player%} is true:
+					send "&6--&2 Emoji &6--"
+					send "&6Shift&c' &6Cliquez sur une &bémoji&c, &6pour l'ajouter au message&c:"
+					set {_count} to 0
+					loop {{@prefix}.chat.emoji::*}:
+						add 1 to {_count}
+					set {_loop} to 0
+					loop {{@prefix}.chat.emoji::*}:
+						add 1 to {_loop}
+						#if player has permission "{@prefix}.emoji.%loop-index%":  --> Fonction pour des permission d'émoji individuelle
+						if {_loop} < {_count}:
+							set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%,"
+						set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%{""text"":""%loop-value%"",""insertion"":""%loop-value%"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""&3[Shift + Cli%loop-value%""}]}}}"
+					execute console command "tellraw %player% [%{_tellraw.emoji.list}%]"
+				else:
+					send "{@prefix-msg} &cCette commande ne fonctionne qu'avec les émoji &a[ON]"
+					send "{@prefix-msg} &eFaites&c,&e /emoji on&c!"
+			else:
+				send "{@prefix-msg} &cCette commande est désactivée!"
+#
+
+
+on load:	#Emoji
+	delete {{@prefix}.chat.emoji::*}
+	set {{@prefix}.chat.emoji:::bowtie:} to "退"
+	set {{@prefix}.chat.emoji::^_^} to "送"
+	set {{@prefix}.chat.emoji:::laughing:} to "适"
+	set {{@prefix}.chat.emoji::>_<} to "适"
+	set {{@prefix}.chat.emoji:::]} to "逃"
+	set {{@prefix}.chat.emoji:::D} to "逄"
+	set {{@prefix}.chat.emoji:::d} to "逄"
+	set {{@prefix}.chat.emoji::c:} to "逅"
+	set {{@prefix}.chat.emoji::;]} to "逆"
+	set {{@prefix}.chat.emoji::<3_<3} to "逇"
+	set {{@prefix}.chat.emoji::kisss} to "逈"
+	set {{@prefix}.chat.emoji::kiss} to "选"
+		#double way
+	set {{@prefix}.chat.emoji::o_o} to "逊"
+	set {{@prefix}.chat.emoji:::relieved:} to "逋"
+	set {{@prefix}.chat.emoji:::satisfied:} to "逌"
+	set {{@prefix}.chat.emoji:::grin:} to "逍"
+	set {{@prefix}.chat.emoji::;)} to "逎"
+	set {{@prefix}.chat.emoji::;p} to "逐"
+	set {{@prefix}.chat.emoji::;d} to "逑"
+	set {{@prefix}.chat.emoji::;P} to "逐"
+	set {{@prefix}.chat.emoji::;D} to "逑"
+	set {{@prefix}.chat.emoji:::)} to "递"
+	set {{@prefix}.chat.emoji:::3} to "逓"
+	set {{@prefix}.chat.emoji::;3} to "途"
+		#double way
+	set {{@prefix}.chat.emoji:::P} to "逕"
+	set {{@prefix}.chat.emoji:::p} to "逕"
+	set {{@prefix}.chat.emoji:::z} to "逖"
+	set {{@prefix}.chat.emoji:::worried:} to "逗"
+		#double wai
+	set {{@prefix}.chat.emoji:::(} to "逘"
+	set {{@prefix}.chat.emoji:::frowning:} to "逘"
+	set {{@prefix}.chat.emoji::D:} to "這"
+	set {{@prefix}.chat.emoji:::oo} to "通"
+	set {{@prefix}.chat.emoji:::o} to "遭"
+	set {{@prefix}.chat.emoji:::x} to "遮"
+	set {{@prefix}.chat.emoji::Skype} to "適"
+	set {{@prefix}.chat.emoji::skype} to "適"
+	set {{@prefix}.chat.emoji::hhhh} to "逛"
+	set {{@prefix}.chat.emoji:::s} to "逜"
+	set {{@prefix}.chat.emoji:::hushed:} to "逝"
+	set {{@prefix}.chat.emoji::-_-} to "逞"
+	set {{@prefix}.chat.emoji:::/} to "速"
+	set {{@prefix}.chat.emoji::':D:} to "造"
+	#	'
+	set {{@prefix}.chat.emoji::':(} to "逡"
+	#	'
+	set {{@prefix}.chat.emoji:::disappointed_relieved:} to "逢"
+	set {{@prefix}.chat.emoji:::weary:} to "連"
+	set {{@prefix}.chat.emoji::v_v} to "逤"
+	set {{@prefix}.chat.emoji:::disappointed:} to "逥"
+	set {{@prefix}.chat.emoji::>_<} to "逦"
+	set {{@prefix}.chat.emoji:::fearful:} to "逧"
+	set {{@prefix}.chat.emoji:::cold_sweat:} to "逨"
+	set {{@prefix}.chat.emoji::>n<} to "逩"
+	set {{@prefix}.chat.emoji:::'(} to "逪"
+	#	'
+		#double way
+	set {{@prefix}.chat.emoji::;(} to "逫"
+	set {{@prefix}.chat.emoji::D':} to "逫"
+	#	'
+	set {{@prefix}.chat.emoji:::'D} to "逬"
+	#	'
+	set {{@prefix}.chat.emoji::xnx} to "逭"
+	set {{@prefix}.chat.emoji::x_x} to "逭"
+	set {{@prefix}.chat.emoji::""_""} to "逭"
+	set {{@prefix}.chat.emoji::OnO} to "逮"
+	set {{@prefix}.chat.emoji:::neckbeard:} to "逯"
+	set {{@prefix}.chat.emoji::>-<} to "逰"
+	set {{@prefix}.chat.emoji::>:(} to "週"
+	set {{@prefix}.chat.emoji::>>:(} to "進"
+	set {{@prefix}.chat.emoji:::triumph:} to "逳"
+	set {{@prefix}.chat.emoji:::sleepy:} to "逴"
+	set {{@prefix}.chat.emoji:::)P} to "逵"
+	set {{@prefix}.chat.emoji::Apple:x} to "逶"
+	set {{@prefix}.chat.emoji::8)} to "逷"
+	set {{@prefix}.chat.emoji::xox} to "逸"
+	set {{@prefix}.chat.emoji:::imp:} to "逹"
+	set {{@prefix}.chat.emoji:::smiling_imp:} to "逺"
+	set {{@prefix}.chat.emoji:::|} to "逻"
+	set {{@prefix}.chat.emoji:::no_mouth:} to "逼"
+	set {{@prefix}.chat.emoji::0:)} to "逽"
+	set {{@prefix}.chat.emoji::(8]} to "逾"
+	set {{@prefix}.chat.emoji:::yellow_heart:} to "逿"
+	set {{@prefix}.chat.emoji:::blue_heart:} to "遀"
+	set {{@prefix}.chat.emoji:::purple_heart:} to "遁"
+	set {{@prefix}.chat.emoji::<3} to "遂"
+	set {{@prefix}.chat.emoji:::green_heart:} to "遃"
+	set {{@prefix}.chat.emoji::</3:} to "遄"
+	set {{@prefix}.chat.emoji:::heartbeat:} to "遅"
+	set {{@prefix}.chat.emoji::<333} to "遆"
+	set {{@prefix}.chat.emoji::<33} to "遇"
+	set {{@prefix}.chat.emoji::<3<3} to "遈"
+	set {{@prefix}.chat.emoji::-<3->} to "遉"
+	set {{@prefix}.chat.emoji::""<3""} to "遊"
+	set {{@prefix}.chat.emoji::""""} to "運"
+	set {{@prefix}.chat.emoji::[X]} to "遌"
+	set {{@prefix}.chat.emoji::[""X""]} to "遍"
+	set {{@prefix}.chat.emoji::[O]} to "過"
+	set {{@prefix}.chat.emoji:::explo} to "遏"
+	set {{@prefix}.chat.emoji:::anger:} to "遐"
+	set {{@prefix}.chat.emoji::[!]} to "遑"
+	set {{@prefix}.chat.emoji::[?]} to "遒"
+	set {{@prefix}.chat.emoji::[!""]} to "道"
+	set {{@prefix}.chat.emoji::[?""]} to "達"
+	set {{@prefix}.chat.emoji::zzz} to "違"
+	set {{@prefix}.chat.emoji:::dash:} to "遖"
+	set {{@prefix}.chat.emoji:::sweat_drops:} to "遗"
+	set {{@prefix}.chat.emoji:::notes:} to "遘"
+	set {{@prefix}.chat.emoji:::musical_note:} to "遙"
+	set {{@prefix}.chat.emoji:::fire:} to "遚"
+	set {{@prefix}.chat.emoji:::shit:} to "遛"
+	set {{@prefix}.chat.emoji:::miam:} to "透"
+	set {{@prefix}.chat.emoji:::+} to "遡"
+	set {{@prefix}.chat.emoji:::-} to "遢"
+	set {{@prefix}.chat.emoji:::cut} to "遠"
+	set {{@prefix}.chat.emoji:::bombe} to "遝"
+	set {{@prefix}.chat.emoji:::gun} to "遞"
+	set {{@prefix}.chat.emoji:::$} to "遜"
+	set {{@prefix}.chat.emoji:::oklm} to "遣"
+#

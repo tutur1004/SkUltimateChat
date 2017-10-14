@@ -1,0 +1,8 @@
+
+#	Module de prefix pour pex
+
+#
+function prefix(p: player) :: text:
+	set {_prefix} to prefix of {_p}
+	return {_prefix}
+#

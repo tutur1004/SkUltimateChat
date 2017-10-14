@@ -1,0 +1,29 @@
+
+options:
+	prefix: "SkUltimateChat"
+	prefix-msg: "%{SkUltimateChat-commandes-prefix}%"
+	perms: "%{SkUltimateChat-permisssions-prefix}%"
+#
+
+on join:
+	delete {{@prefix}.chat.mods.%player%}	
+#
+
+command /mods:
+	permission: "%{{@perms}.mods.perm.cmd-chatmods}%"
+	permission-message: "{@prefix-msg} <light red>Cette commande est réservée au modérateurs."
+	executable by: players
+	description: "{@prefix-msg} &fcommande de modération du chat."
+	trigger:
+		if {{@prefix}.chat.mods.%player%} is true:
+			delete {{@prefix}.chat.mods.%player%}
+			ChatSendFull(player)
+			send "{@prefix-msg} <light red>Système de modération du chat désactivé."
+		else:
+			set {{@prefix}.chat.mods.%player%} to true
+			ChatSendFull(player)
+			wait 2 ticks
+			send "{@prefix-msg} <green>Système de modération du chat Activé."
+			wait 1 second
+			send "{@prefix-msg} <light red>ATTENTION, ne pas abuser de la suppression de messages!!"
+#

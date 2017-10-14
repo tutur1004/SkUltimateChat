@@ -1,0 +1,31 @@
+
+options:
+	prefix: "SkUltimateChat"
+	prefix-msg: "%{SkUltimateChat-commandes-prefix}%"
+	perms: "%{SkUltimateChat-permisssions-prefix}%"
+#
+
+command /nick [<text>] [<text>]:
+	description: "Permet de changer de surnom"
+	permission: "%{{@perms}.nick.perm.cmd-nick}%"
+	permission message: "{@prefix-msg} <light red>Vous n'avez pas la permission de changer de pseudo."
+	trigger:
+		if arg-1 is not set:
+			send "{@prefix} &cErreur, &6la commande est &b/nick <pseudo>"
+		else if arg-2 is not set:
+			if arg-1 = "%player%":
+				delete {{@prefix}.nick.player.%player%}
+				send "{@prefix-msg} &6Pseudo reset !"				
+			else:
+				set {{@prefix}.nick.player.%player%} to arg-1
+				send "{@prefix-msg} &6Pseudo définis sur &2%arg-1%"
+		else if player has permission "%{{@perms}.nick.perm.cmd-nick-other}%":
+			if arg-2 is "reset":
+				delete {{@prefix}.nick.player.%arg-1%}
+				send "{@prefix-msg} &b%player% &6a reset votre pseudo!" to arg-1
+				send "{@prefix-msg} &6Vous avez reset le pseudo de %arg-1%"
+			else:
+				set {{@prefix}.nick.player.%arg-1%} to arg-2
+				send "{@prefix-msg} &b%player% &6a définis votre pseudo sur &2%arg-2%" to arg-1
+				send "{@prefix-msg} &6Vous avez changé le pseudo de %arg-1%"
+#
