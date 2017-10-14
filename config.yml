@@ -1,1 +1,152 @@
 
+  #################################################
+  #   ▄▀▀▄ ▄▀▀▄ █▄ █ █▀▀ █ ▄▀▀    █▀▀ █ █   █▀▀   #
+  #   █  ▄ █  █ █ ▀█ █▀▀ █ █ ▀█   █▀▀ █ █   █▀▀   #
+  #    ▀▀   ▀▀  ▀  ▀ ▀   ▀  ▀▀    ▀   ▀ ▀▀▀ ▀▀▀   #
+  #################################################
+
+#    Voici le fichier de configurations, merci de ne pas modifier les champs inconnus! Et suivre les informations
+configs:
+    core:
+        #    Préfix des permissions, ne pas laisser ce champ vide !! (Ne pas mettre de point !)
+        #    exemple le préfix "skultimatechat" pour la permission du /nick donne skultimatechat.cmd.nick
+        permission-prefix: skultimatechat
+        
+        #    Préfix des messages affichés dans les menus de commandes, laisser des " " !
+        commandes-prefix: "&2[&6SkChat&2]"
+        
+        #    Information de connection MySQL, champs obligatoires ! Laisser les ""
+        MySQL:
+            #    Renseigner Ip:Port, les informations par défaut sont "localhost:3306".
+            host: "localhost:3306"
+            #    Nom de votre base de données.
+            database: "minecraft"
+            #    Login / Username / Utilisateur...	- Obligatoire même en local !!
+            username: "minecraft"
+            #    Password / Mot de Passe...			- Obligatoire même en local !!
+            password: "abc"
+        
+    #################################################################
+    #    ▄▀▄ ▄▀▀▄ ▀█▀ █ █   █ ▄▀▄ ▀█▀ █ ▄▀▀▄ █▄ █   █ ▄▀▀▄ █   █    #
+    #    █▀█ █  ▄  █  █  █ █  █▀█  █  █ █  █ █ ▀█   █ █  ▄ █   ▀    #
+    #    ▀ ▀  ▀▀   ▀  ▀   ▀   ▀ ▀  ▀  ▀  ▀▀  ▀  ▀   ▀  ▀▀  ▀   ▀    #
+    #    Activer ou désactiver les fonctions principales du skript. #
+    #    Par défaut, false pour permettre à l'admin de configurer   #
+    #    le skript sans bloquer le chat :bruh:, finissez de config;)#
+        enable: false
+    #################################################################
+    modules:
+        prefix:
+            #    Renseignez ici le nom de votre plugin de permission, liste des plugins supportés sur le poste
+            plugin-name: pex
+        chat:
+            #    Active ou désactive le module chat (Ce module ne peut être désactivé)
+            module-chat: true
+            
+            #    Wipe du cache de messages au restart ? (true / false), si true les messages seront supprimés
+            #    Si false, votre base SQL va vite être remplis (~50Mo par jours pour 1.000 joueurs) Attention
+            wipe-messages: true
+            
+            #    Liste des URL autorisés:
+            white-url:
+            - votresite.fr
+            - skript-mc.fr
+            
+            #    Plugin de permission utilisé, voir la liste des plugins supportés sur le post officiel !
+            #    (Contacter @tutur1004 pour ajouter la compatibilitée pour vos plugins)
+            perm-plugin: Pex
+            
+            permissions:
+                #    Commande /chat cd <time>, permet au joueur de définir un CoolDown de chat
+                #    Type: Modération
+                cmd-cooldown: cmd.cooldown
+                
+                #    Commande /chat br <message>, permet de diffuser un message global
+                #    Type: Modération, Jeux
+                cmd-broadcast: cmd.broadcast
+                
+                #    Permission de faire des messages colorés avec les codes &1 &2... &a &b...
+                colored-chat: chat.color
+        censure:
+            #    Active ou désactive la censure d'URL de chat
+            module-censure: true
+            
+            #    Active la censure des URL en msg (le module "msg" doit être activé)
+            censure-msg: false
+
+            permissions:            
+                #    Permission de ne pas avoir les URL moderés, permission nécessaire pour les liens en MP
+                url-bypass: url.bypass
+                
+                #    Accepter / refuser un URL
+                #    Type: Modération
+                url-check: url.check
+        mods:
+            #    Active les options de suppression de messages ciblé dans le chat
+            module-mods: true
+            
+            permissions:                
+                #    Commande /chat mod, permet de passer / sortir du mode modérateur chat
+                #    Type: Modération
+                cmd-chatmods: cmd.chatmods
+                
+                #    Commande /chat spy, permet de voir les MP des gens, ne fonctionne que si /chat mod est actif
+                #    Type: Modération
+                cmd-mpcheck: privatespy
+        msg:
+            #    Active ou désactive le module msg
+            #    Si false les messages privés ne seront pas gérés par SkUltimateChat
+            module-msg: true
+            
+            #    Sauvegarde des Messages privés, (En cas de suppression d'un message, les MP seront réaffichés)
+            msg-save: false
+            
+            #    Autoriser le /reply, note : le /msg sera toujours actif !
+            message-reply: true
+            
+            permissions:
+                #    Commande /msg <destinataire> <message>, envois un message privé.
+                #    Type: Chat joueur
+                cmd-message: cmd.message
+                
+                #    Commande /reply <message>, répond au dernier message privé reçu.
+                #    Type: Chat joueur
+                cmd-reply: cmd.reply
+        emoji:
+            #    Active ou désactive le module emoji, les émojis seront totalement désactivées !!
+            module-emoji: true
+   
+            #    Active la transformation automatique des émojis d'un message de joueur
+            #    Note : Une permission permet de limiter sa !
+            auto-emoji: true
+            
+            #    Active la commande /emoji list
+            emoji-list: true
+            
+            permissions:
+                #    /emoji on/mode/off, permet d'activer les émojis
+                #    Type: Fun
+                cmd-emoji-mode: cmd.emoji-mode
+                
+                #    /emoji list, affiche la liste des émojis et permet de les inserrer
+                #    Type: Fun
+                cmd-emoji-list: cmd.emoji-list
+        nick:
+            #    Active ou désactive le module nick
+            module-nick: true
+            
+            permissions:
+                #    /nick <name>, permet de changer sont pseudo dans le chat
+                #    Type: Fun
+                cmd-nick: cmd.nick
+                
+                #    /nick <player> <name>, permet de changer le pseudo de quelqu'un
+                #    Type: Modération, Fun
+                cmd-nick-other: cmd.nick-other
+        list:#Module non Terminé
+            #    Active ou désactive le contrôle du /nick, MODULE NON TERMINÉ, ne sert à rien d'activer
+            module-list: false
+            
+            permissions:
+                #    /list, commande pour afficher la liste des joueurs
+                cmd-list: cmd.list
