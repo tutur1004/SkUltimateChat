@@ -1,3 +1,6 @@
+options:
+	prefix: SkUltimateChat
+#
 on load:
 	delete {{@prefix}.chat.url.censure::*}
 	#	Début d'URL
