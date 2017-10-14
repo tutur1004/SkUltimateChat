@@ -36,7 +36,7 @@ configs:
         enable: false
     #################################################################
     modules:
-        prefix:
+        player-prefix:
             #    Renseignez ici le nom de votre plugin de permission, liste des plugins supportés sur le poste
             plugin-name: pex
         chat:
