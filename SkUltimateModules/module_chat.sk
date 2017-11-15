@@ -3,16 +3,22 @@
 options:
 	prefix: SkUltimateChat
 	prefix-msg: %{SkUltimateChat-commandes-prefix}%
-	perms: perm.%{SkUltimateChat-permisssions-prefix}%
+	perms: perm.%{SkUltimateChat-permissions-prefix}%
 	#	from = le nom de la BDD, à définir dans le fichier de config ?
-	from: `%{{@prefix}-sql.database}%`.`SkUltimateChat`
+	from: `SkUltimateChat`
 #
+
+#on load:
+#	set {{@prefix}-sql.database} to "minecraft"
 
 #	Le module prefix doit être chargé en 1er pour pouvoir load la function
 function displayprefix(p: player) :: text:
 	set {_prefix} to prefix({_p})
-	if {{@prefix}.nick.module-nick} is true and {{@prefix}.nick.player.%{_p}%} is set:
-		set {_player} to "%{_prefix}% %{{@prefix}.nick.player.%{_p}%}%"
+	if {{@prefix}.nick.module-nick} is true:
+		if {{@prefix}.nick.player.%{_p}%} is set:
+			set {_player} to "%{_prefix}% %{{@prefix}.nick.player.%{_p}%}%"
+		else:
+			set {_player} to "%{_prefix}% %{_p}%"
 	else:
 		set {_player} to "%{_prefix}% %{_p}%"
 	set {_player} to coloured {_player}
@@ -37,7 +43,7 @@ on chat:
 	#	On annule le message (pour le formater soit même)
 	cancel event
 	if {{@prefix}.censure.module-censure} is true:
-		if player do not have permisssion "%{{@perms}.censure.perm.cmd-chatmods}%":
+		if player does not have permission "%{{@perms}.censure.perm.cmd-chatmods}%":
 			loop {{@prefix}.white-url::*}:
 				if {_msg} contains "%loop-value%":
 					send "{@prefix-msg} &aLe domaine &6%loop-value% &aest autorisé" to player
@@ -54,14 +60,14 @@ on chat:
 	if {{@prefix}.emoji.module-emoji} is true:
 		loop {{@prefix}.emoji::*}:
 			replace all loop-value with loop-index in {_message}
-	#update "INSERT INTO {@from} (`joueur`, `message`, `date`) VALUES ('%player%', '%{_message}%', '%now%')"
-	#set {_id} to the first element out of objects in column "max(id)" from result of query "SELECT max(id) FROM {@from}"	replace all ":!S:" in {_message} with "'"
+	update "INSERT INTO {@from} (`joueur`, `message`, `date`) VALUES ('%player%', '%{_message}%', '%now%')"
+	set {_id} to the first element out of objects in column "max(id)" from result of query "SELECT max(id) FROM {@from}"	replace all ":!S:" in {_message} with "'"
 	replace all ":!S:" in {_message} with "'"
 	replace all ":!T:" in {_message} with """"
 	set {_playername} to displayprefix(player)
-	if player has permisssion "%{{@perms}.mods.perm.colored-chat}%":
-		send {_message} to coloured {_message}
-	send "%uncoloured {_playerprefix}>> &r%uncoloured {_message}%" to console
+	if player has permission "%{{@perms}.mods.perm.colored-chat}%":
+		set {_message} to coloured {_message}
+	send "%uncoloured {_playerprefix}%>> &r%uncoloured {_message}%" to console
 	#	Envois du message
 	loop all players:
 		SendMessage(loop-player, "%{_playername}%", "%{_message}%")
@@ -69,28 +75,28 @@ on chat:
 
 #	Reset du chat sur une ligne pour une personne
 function ResetSingleChat(p: player, id: integer):
-	#set {_supprime} to the first element out of objects in column "supprime" from result of query "SELECT supprime FROM {@from} WHERE `id` = '%{_id}%'"
-	#set {_player} to the first element out of objects in column "sender" from result of query "SELECT sender FROM {@from} WHERE `id` = '%{_id}%'" parsed as offline player
-	#set {_type} to the first element out of objects in column "type" from result of query "SELECT type FROM {@from} WHERE `id` = '%{_id}%'"
+	set {_supprime} to the first element out of objects in column "supprime" from result of query "SELECT supprime FROM {@from} WHERE `id` = '%{_id}%'"
+	set {_player} to the first element out of objects in column "sender" from result of query "SELECT sender FROM {@from} WHERE `id` = '%{_id}%'" parsed as offline player
+	set {_type} to the first element out of objects in column "type" from result of query "SELECT type FROM {@from} WHERE `id` = '%{_id}%'"
 	#	Préparations de base du message
 	replace all ":!S:" in {_message} with "'"
 	replace all ":!T:" in {_message} with """"
 	set {_playername} to displayprefix({_player})
-	if {_player} has permisssion "%{{@perms}.mods.perm.colored-chat}%":
-		send {_message} to coloured {_message}
+	if {_player} has permission "%{{@perms}.mods.perm.colored-chat}%":
+		set {_message} to coloured {_message}
 	#	Check du type de message, si MP on compte differement	
 	if {_type} is "MessagePrive":
 		if {{@prefix}.msg.module-msg} is true:
 			if {{@prefix}.msg.msg-save} is true:
-				#set {_destinataire} to the first element out of objects in column "destinataire" from result of query "SELECT destinataire FROM {@from} WHERE `id` = '%{_id}%'" parsed as offline player
+				set {_destinataire} to the first element out of objects in column "destinataire" from result of query "SELECT destinataire FROM {@from} WHERE `id` = '%{_id}%'" parsed as offline player
 				if {_destinataire} is {_p}:
 					send "&6[&c%{_playername}%&6-->&aMoi&6] &r%{_message}%" to {_p}
 				else if {_player} is {_p}:
 					send "&6[&aMoi&6-->&c%{_destinataire}%&6] &r%{_message}%" to {_p}
 				#	Message privé pour le mode [SPY]
 				else if {{@prefix}.mods.module-mods} is true:
-					if {{@prefix}.chat.mods.%loop-player%} is true:
-						if {_p} has permisssion "{{@perms}.mods.perm.privatespy}":
+					if {{@prefix}.chat.mods.%{_p}%} is true:
+						if {_p} has permission "{{@perms}.mods.perm.privatespy}":
 							send "&c[SPY]&e|&6[&c%{_playername}%&6-->&c%{_destinataire}%&6] &r%{_message}%" to {_p}
 	else:
 		#	Message normal non supprimé, on envois la function pour les joueurs / modos
@@ -114,13 +120,13 @@ function ChatSendFull(p: player):
 		send "" to {_p}
 	set {_lastid} to the first element out of objects in column "max(id)" from result of query "SELECT max(id) FROM {@from}"
 	set {_id} to {_lastid} - 100
-	if arg 1 < 100:
+	if {_lastid} < 100:
 		set {_id} to 1
 	loop 120 times:
-		#set {_message} to the first element out of objects in column "message" from result of query "SELECT message FROM {@from} WHERE `id` = '%{_id}%'"
+		set {_message} to the first element out of objects in column "message" from result of query "SELECT message FROM {@from} WHERE `id` = '%{_id}%'"
 		if {_message} is "<none>":
 			stop trigger
-		ResetSingleChat(p: {_p}, id: {_id})
+		ResetSingleChat({_p}, {_id})
 #
 		
 
@@ -143,23 +149,23 @@ command //rem-msg-id <integer> <integer>:
 		if arg 1 < 100:
 			set {_id} to 1
 		loop 120 times:
-			#set {_message} to the first element out of objects in column "message" from result of query "SELECT message FROM {@from} WHERE `id` = '%{_id}%'"
+			set {_message} to the first element out of objects in column "message" from result of query "SELECT message FROM {@from} WHERE `id` = '%{_id}%'"
 			if {_message} is "<none>":
 				stop trigger
-			#set {_supprime} to the first element out of objects in column "supprime" from result of query "SELECT supprime FROM {@from} WHERE `id` = '%{_id}%'"
-			#set {_player} to the first element out of objects in column "sender" from result of query "SELECT sender FROM {@from} WHERE `id` = '%{_id}%'" parsed as offline player
-			#set {_type} to the first element out of objects in column "type" from result of query "SELECT type FROM {@from} WHERE `id` = '%{_id}%'"
+			set {_supprime} to the first element out of objects in column "supprime" from result of query "SELECT supprime FROM {@from} WHERE `id` = '%{_id}%'"
+			set {_player} to the first element out of objects in column "sender" from result of query "SELECT sender FROM {@from} WHERE `id` = '%{_id}%'" parsed as offline player
+			set {_type} to the first element out of objects in column "type" from result of query "SELECT type FROM {@from} WHERE `id` = '%{_id}%'"
 			#	Préparations de base du message
 			replace all ":!S:" in {_message} with "'"
 			replace all ":!T:" in {_message} with """"
 			set {_playername} to displayprefix({_player})
-			if {_player} has permisssion "%{{@perms}.mods.perm.colored-chat}%":
-				send {_message} to coloured {_message}
+			if {_player} has permission "%{{@perms}.mods.perm.colored-chat}%":
+				set {_message} to coloured {_message}
 			#	Check du type de message, si MP on compte differement	
 			if {_type} is "MessagePrive":
 				if {{@prefix}.msg.module-msg} is true:
 					if {{@prefix}.msg.msg-save} is true:
-						#set {_destinataire} to the first element out of objects in column "destinataire" from result of query "SELECT destinataire FROM {@from} WHERE `id` = '%{_id}%'" parsed as offline player
+						set {_destinataire} to the first element out of objects in column "destinataire" from result of query "SELECT destinataire FROM {@from} WHERE `id` = '%{_id}%'" parsed as offline player
 						if {_destinataire} is online:
 							set {_destinataire} to {_destinataire} parsed as player
 							send "&6[&c%{_player}%&6-->&aMoi&6] &r%{_message}%" to {_destinataire}
@@ -168,9 +174,9 @@ command //rem-msg-id <integer> <integer>:
 							send "&6[&aMoi&6-->&c%{_destinataire}%&6] &r%{_message}%" to {_player}
 						#	Message privé pour le mode [SPY]
 						if {{@prefix}.mods.module-mods} is true:
-							loop all player:
+							loop all players:
 								if {{@prefix}.chat.mods.%loop-player%} is true:
-									if loop-player has permisssion "{{@perms}.mods.perm.privatespy}":
+									if loop-player has permission "{{@perms}.mods.perm.privatespy}":
 										if loop-player is not {_player}:
 											if loop-player is not {_destinataire}:
 												send "&c[SPY]&e|&6[&c%{_player}%&6-->&c%{_destinataire}%&6] &r%{_message}%" to loop-player
@@ -186,7 +192,7 @@ command //rem-msg-id <integer> <integer>:
 							if {{@prefix}.emoji.module-emoji} is true:
 								if {{@prefix}.emoji.chat.%loop-player%} is true:
 									loop {{@prefix}.emoji::*}:
-										replace all loop-index with loop-value-2 in {_message}
+										replace all loop-index with loop-value-3 in {_message}
 							execute console command "tellraw %loop-player% [{""text"":""<Message de %{_player}% supprimé par %{_supprime}%>"",""color"":""red"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""%{_message}%""}]}}}]"
 						else:
 							send "&c<Message de %{_player}% supprimé par %{_supprime}%>" to loop-player
