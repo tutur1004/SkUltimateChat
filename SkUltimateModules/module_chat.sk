@@ -1,8 +1,3 @@
-script options:
-    $ init com.mysql.jdbc.Driver
-    $ db url jdbc:mysql://%{@prefix}-sql.host}%/%{{@prefix}-sql.database}%
-    $ db username %{{@prefix}-sql.username}%
-    $ db password %{{@prefix}-sql.password}%
 #
 
 options:
