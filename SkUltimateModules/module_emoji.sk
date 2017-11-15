@@ -1,4 +1,4 @@
-
+#
 options:
 	prefix: SkUltimateChat
 	prefix-msg: %{SkUltimateChat-commandes-prefix}%
