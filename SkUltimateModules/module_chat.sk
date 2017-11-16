@@ -8,9 +8,6 @@ options:
 	from: `SkUltimateChat`
 #
 
-#on load:
-#	set {{@prefix}-sql.database} to "minecraft"
-
 #	Le module prefix doit être chargé en 1er pour pouvoir load la function
 function displayprefix(p: player) :: text:
 	set {_prefix} to prefix({_p})
