@@ -57,7 +57,7 @@ command /emoji [<text>]:
 			if {{@prefix}.emoji.loaded.%player%} is true:
 				if {{@prefix}.emoji.emoji-list} is true:
 					send "&eliste&c: &fAffiche la liste des émojis &c& &fpermet de les utiliser"
-					send "   &c→→→ pour voir la liste il faut avoir les emoji &a[ON]&c←←←"
+					send "   &c->->-> pour voir la liste il faut avoir les emoji &a[ON]&c←←←"
 		else if arg 1 is "on":
 			if {{@prefix}.emoji.wait.%player%} is true:
 				send "&cMerci de patienter un peu avant de faire cette commande !"
