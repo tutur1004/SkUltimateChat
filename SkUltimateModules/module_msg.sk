@@ -9,7 +9,7 @@ options:
 function SendPrivateMessage(p: player, name: player, send: boolean, message: text):
 	if {{@prefix}.emoji.module-emoji} is true:
 		if {{@prefix}.emoji.chat.%{_p}%} is true:
-			loop {{@prefix}.emoji::*}:
+			loop {{@prefix}-emoji::*}:
 				replace all loop-index with loop-value in {_message}
 	set {_name} to displayprefix({_name})
 	if {_send} is true:
