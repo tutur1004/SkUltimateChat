@@ -1,4 +1,4 @@
-#
+
 options:
 	prefix: SkUltimateChat
 	prefix-msg: %{SkUltimateChat-commandes-prefix}%
@@ -35,7 +35,7 @@ on packet recieve:
 
 on join:
 	if {{@prefix}.emoji.enable.%player%} is true:
-		packetRPSend(player, "https://www.dropbox.com/s/jjnuiuu70lngxmt/PWTG_Pack.zip?dl=0", "3672848e74ebe0f3b00ad28201f74693afca9af8")
+		packetRPSend(player, "https://www.dropbox.com/s/jjnuiuu70lngxmt/PWTG_Pack.zip?dl=0", "%{SkUltimateChat-hash}%")
 #
 on quit:
 	delete {{@prefix}.emoji.loaded.%player%}
@@ -57,14 +57,14 @@ command /emoji [<text>]:
 			if {{@prefix}.emoji.loaded.%player%} is true:
 				if {{@prefix}.emoji.emoji-list} is true:
 					send "&eliste&c: &fAffiche la liste des émojis &c& &fpermet de les utiliser"
-					send "   &c->->-> pour voir la liste il faut avoir les emoji &a[ON]&c←←←"
+					send "   &c→→→ pour voir la liste il faut avoir les emoji &a[ON]&c←←←"
 		else if arg 1 is "on":
 			if {{@prefix}.emoji.wait.%player%} is true:
 				send "&cMerci de patienter un peu avant de faire cette commande !"
 				stop trigger
 			set {{@prefix}.emoji.chat.%player%} to true
 			if {{@prefix}.emoji.loaded.%player%} is not set:
-				packetRPSend(player, "https://www.dropbox.com/s/jjnuiuu70lngxmt/PWTG_Pack.zip?dl=0", "3672848e74ebe0f3b00ad28201f74693afca9af8")
+				packetRPSend(player, "https://www.dropbox.com/s/jjnuiuu70lngxmt/PWTG_Pack.zip?dl=0", "%{SkUltimateChat-hash}%")
 			set {{@prefix}.emoji.loaded.%player%} to true
 			send "{@prefix-msg} &rVous avez activé les émojis, /emoji liste pour voir la liste."
 			ChatSendFull(player)
@@ -114,7 +114,7 @@ command /emoji [<text>]:
 #
 
 
-on load:	#Emoji
+on load:#Emoji
 	delete {{@prefix}.chat.emoji::*}
 	set {{@prefix}.chat.emoji:::bowtie:} to "退"
 	set {{@prefix}.chat.emoji::^_^} to "送"
@@ -128,7 +128,7 @@ on load:	#Emoji
 	set {{@prefix}.chat.emoji::<3_<3} to "逇"
 	set {{@prefix}.chat.emoji::kisss} to "逈"
 	set {{@prefix}.chat.emoji::kiss} to "选"
-		#double way
+	#double way
 	set {{@prefix}.chat.emoji::o_o} to "逊"
 	set {{@prefix}.chat.emoji:::relieved:} to "逋"
 	set {{@prefix}.chat.emoji:::satisfied:} to "逌"
@@ -141,12 +141,12 @@ on load:	#Emoji
 	set {{@prefix}.chat.emoji:::)} to "递"
 	set {{@prefix}.chat.emoji:::3} to "逓"
 	set {{@prefix}.chat.emoji::;3} to "途"
-		#double way
+	#double way
 	set {{@prefix}.chat.emoji:::P} to "逕"
 	set {{@prefix}.chat.emoji:::p} to "逕"
 	set {{@prefix}.chat.emoji:::z} to "逖"
 	set {{@prefix}.chat.emoji:::worried:} to "逗"
-		#double wai
+	#double wai
 	set {{@prefix}.chat.emoji:::(} to "逘"
 	set {{@prefix}.chat.emoji:::frowning:} to "逘"
 	set {{@prefix}.chat.emoji::D:} to "這"
@@ -161,9 +161,9 @@ on load:	#Emoji
 	set {{@prefix}.chat.emoji::-_-} to "逞"
 	set {{@prefix}.chat.emoji:::/} to "速"
 	set {{@prefix}.chat.emoji::':D:} to "造"
-	#	'
+	#'
 	set {{@prefix}.chat.emoji::':(} to "逡"
-	#	'
+	#'
 	set {{@prefix}.chat.emoji:::disappointed_relieved:} to "逢"
 	set {{@prefix}.chat.emoji:::weary:} to "連"
 	set {{@prefix}.chat.emoji::v_v} to "逤"
@@ -173,13 +173,13 @@ on load:	#Emoji
 	set {{@prefix}.chat.emoji:::cold_sweat:} to "逨"
 	set {{@prefix}.chat.emoji::>n<} to "逩"
 	set {{@prefix}.chat.emoji:::'(} to "逪"
-	#	'
-		#double way
+	#'
+	#double way
 	set {{@prefix}.chat.emoji::;(} to "逫"
 	set {{@prefix}.chat.emoji::D':} to "逫"
-	#	'
+	#'
 	set {{@prefix}.chat.emoji:::'D} to "逬"
-	#	'
+	#'
 	set {{@prefix}.chat.emoji::xnx} to "逭"
 	set {{@prefix}.chat.emoji::x_x} to "逭"
 	set {{@prefix}.chat.emoji::""_""} to "逭"
