@@ -24,7 +24,7 @@ function displayprefix(p: player) :: text:
 function SendMessage(p: player, playername: text, message: text):
 	if {{@prefix}.emoji.module-emoji} is true:
 		if {{@prefix}.emoji.chat.%{_p}%} is true:
-			loop {{@prefix}.emoji::*}:
+			loop {{@prefix}-emoji::*}:
 				replace all loop-index with loop-value in {_message}
 	if {{@prefix}.chat.mods.%{_p}%} is true:
 		replace all """" in {_message} with "“"
@@ -53,7 +53,7 @@ on chat:
 	replace all "'" in {_message} with ":!S:"
 	replace all """" in {_message} with ":!T:"
 	if {{@prefix}.emoji.module-emoji} is true:
-		loop {{@prefix}.emoji::*}:
+		loop {{@prefix}-emoji::*}:
 			replace all loop-value with loop-index in {_message}
 	execute "INSERT INTO {@from} (`joueur`, `message`, `date`) VALUES ('%player%', '%{_message}%', '%now%')" in {{@prefix}-sql}
 	execute "SELECT max(id) FROM {@from}" in {{@prefix}-sql} and store the result in {_output::*}
@@ -107,7 +107,7 @@ function ResetSingleChat(p: player, id: integer):
 			if {{@prefix}.chat.mods.%{_p}%} is true:
 				if {{@prefix}.emoji.module-emoji} is true:
 					if {{@prefix}.emoji.chat.%{_p}%} is true:
-						loop {{@prefix}.emoji::*}:
+						loop {{@prefix}-emoji::*}:
 							replace all loop-index with loop-value in {_message}
 				execute console command "tellraw %{_p}% [{""text"":""<Message de %{_player}% supprimé par %{_supprime}%>"",""color"":""red"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""%{_message}%""}]}}}]"
 			else:
@@ -199,7 +199,7 @@ command //rem-msg-id <integer> <integer>:
 						if {{@prefix}.chat.mods.%loop-player%} is true:
 							if {{@prefix}.emoji.module-emoji} is true:
 								if {{@prefix}.emoji.chat.%loop-player%} is true:
-									loop {{@prefix}.emoji::*}:
+									loop {{@prefix}-emoji::*}:
 										replace all loop-index with loop-value-3 in {_message}
 							execute console command "tellraw %loop-player% [{""text"":""<Message de %{_player}% supprimé par %{_supprime}%>"",""color"":""red"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""%{_message}%""}]}}}]"
 						else:
