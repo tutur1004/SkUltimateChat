@@ -3,7 +3,7 @@ options:
 	prefix-msg: %{SkUltimateChat-commandes-prefix}%
 	perms: perm.%{SkUltimateChat-permisssions-prefix}%
 	#	from = le nom de la BDD, à définir dans le fichier de config ?
-	from: `%{{@prefix}-sql.database}%`.`SkUltimateChat`
+	from: `SkUltimateChat`
 #
 
 function SendPrivateMessage(p: player, name: player, send: boolean, message: text):
@@ -21,7 +21,7 @@ function SendPrivateMessage(p: player, name: player, send: boolean, message: tex
 command /pm <player> <text>:
 	aliases: tell, t, w, msg, mp, /minecraft:tell, /minecraft:w, /minecraft:msg, private, /minecraft:whisper
 	usage: /msg <joueur> <message>
-	permisssion: "%{{@perms}.msg.perm.cmd.message}%"
+	permisssion: {{@perms}.msg.perm.cmd.message}
 	permisssion-message: "{@prefix-msg} &cVous n'êtes pas autorisé à envoyer des messages privés !"
 	trigger:
 		if arg 1 is player:
@@ -30,7 +30,7 @@ command /pm <player> <text>:
 		set {_message} to coloured arg 2 parsed as text
 		if {{@prefix}.censure.module-censure} is true:
 			if {{@prefix}.censure.censure-msg} is true:
-				if player do not have permisssion "%{{@perms}.censure.perm.cmd-chatmods}%":
+				if player do not have permission "%{{@perms}.censure.perm.cmd-chatmods}%":
 					loop {{@prefix}.white-url::*}:
 						if {_msg} contains "%loop-value%":
 							send "{@prefix-msg} &aLe domaine &6%loop-value% &aest autorisé" to player
@@ -44,7 +44,7 @@ command /pm <player> <text>:
 		SendPrivateMessage(arg-1, player, true, {_message})
 		SendPrivateMessage(player, arg-1, false, {_message})
 		if {{@prefix}.mods.module-mods} is true:
-			loop all player:
+			loop all players:
 				if {{@prefix}.chat.mods.%loop-player%} is true:
 					if loop-player has permisssion "{{@perms}.mods.perm.privatespy}":
 						if loop-player is not player:
@@ -57,8 +57,8 @@ command /pm <player> <text>:
 command /reply <text>:
 	aliases: r, reponse, rep
 	usage: /r <message>
-	permisssion: {{@perms}.msg.perm.cmd.reply}
-	permisssion-message: "{@prefix-msg} &cVous n'êtes pas autorisé à utiliser la réponse rapide !"
+	permission: {{@perms}.msg.perm.cmd.reply}
+	permission-message: "{@prefix-msg} &cVous n'êtes pas autorisé à utiliser la réponse rapide !"
 	trigger:
 		if {{@prefix}.lastmsg.%player%} is not set:
 			message "{@prefix-msg} &cVous n'avez pas reçu de messages récemment."
@@ -67,7 +67,7 @@ command /reply <text>:
 			set {_destinataire} to {{@prefix}.lastmsg.%player%}
 			if {{@prefix}.censure.module-censure} is true:
 				if {{@prefix}.censure.censure-msg} is true:
-					if player do not have permisssion "%{{@perms}.censure.perm.cmd-chatmods}%":
+					if player do not have permission "%{{@perms}.censure.perm.cmd-chatmods}%":
 						loop {{@prefix}.white-url::*}:
 							if {_msg} contains "%loop-value%":
 								send "{@prefix-msg} &aLe domaine &6%loop-value% &aest autorisé" to player
@@ -78,7 +78,6 @@ command /reply <text>:
 									send "{@prefix-msg} &cVous ne pouvez pas envoyer de lien par message privé" to player
 									stop trigger
 			execute "INSERT INTO {@from} (`type`, `joueur`, `destinataire`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%{_destinataire}%', '%arg-2%', '%now%')" in {{@prefix}-sql}
-
 			SendPrivateMessage({_destinataire}, player, true, {_message})
 			SendPrivateMessage(player, {_destinataire}, false, {_message})
 			if {{@prefix}.mods.module-mods} is true:
