@@ -55,8 +55,8 @@ on chat:
 	if {{@prefix}.emoji.module-emoji} is true:
 		loop {{@prefix}.emoji::*}:
 			replace all loop-value with loop-index in {_message}
-	execute "INSERT INTO {@from} (`joueur`, `message`, `date`) VALUES ('%player%', '%{_message}%', '%now%')" {{@prefix}-sql}
-	execute "SELECT max(id) FROM {@from}" {{@prefix}-sql} and store the result in {_output::*}
+	execute "INSERT INTO {@from} (`joueur`, `message`, `date`) VALUES ('%player%', '%{_message}%', '%now%')" in {{@prefix}-sql}
+	execute "SELECT max(id) FROM {@from}" in {{@prefix}-sql} and store the result in {_output::*}
 	set {_id} to {_output::1}
 	replace all ":!S:" in {_message} with "'"
 	replace all ":!T:" in {_message} with """"
@@ -71,11 +71,11 @@ on chat:
 
 #	Reset du chat sur une ligne pour une personne
 function ResetSingleChat(p: player, id: integer):
-	execute "SELECT supprime FROM {@from} WHERE `id` = '%{_id}%'" {{@prefix}-sql} and store the result in {_output::*}
+	execute "SELECT supprime FROM {@from} WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
 	set {_supprime} to {_output::1}
-	execute "SELECT sender FROM {@from} WHERE `id` = '%{_id}%'" {{@prefix}-sql} and store the result in {_output::*}
+	execute "SELECT sender FROM {@from} WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
 	set {_player} to {_output::1} parsed as offline player
-	execute "SELECT type FROM {@from} WHERE `id` = '%{_id}%'" {{@prefix}-sql} and store the result in {_output::*}
+	execute "SELECT type FROM {@from} WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
 	set {_type} to {_output::1}
 	#	Préparations de base du message
 	replace all ":!S:" in {_message} with "'"
@@ -87,7 +87,7 @@ function ResetSingleChat(p: player, id: integer):
 	if {_type} is "MessagePrive":
 		if {{@prefix}.msg.module-msg} is true:
 			if {{@prefix}.msg.msg-save} is true:
-				execute "SELECT destinataire FROM {@from} WHERE `id` = '%{_id}%'" {{@prefix}-sql} and store the result in {_output::*}
+				execute "SELECT destinataire FROM {@from} WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
 				set {_destinataire} to {_output::1} parsed as offline player
 				if {_destinataire} is {_p}:
 					send "&6[&c%{_playername}%&6-->&aMoi&6] &r%{_message}%" to {_p}
@@ -118,13 +118,13 @@ function ResetSingleChat(p: player, id: integer):
 function ChatSendFull(p: player):
 	loop 200 times:
 		send "" to {_p}
-	execute "SELECT max(id) FROM {@from}" {{@prefix}-sql} and store the result in {_output::*}
+	execute "SELECT max(id) FROM {@from}" in {{@prefix}-sql} and store the result in {_output::*}
 	set {_lastid} to {_output::1}
 	set {_id} to {_lastid} - 100
 	if {_lastid} < 100:
 		set {_id} to 1
 	loop 120 times:
-		execute "SELECT message FROM {@from} WHERE `id` = '%{_id}%'" {{@prefix}-sql} and store the result in {_output::*}
+		execute "SELECT message FROM {@from} WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
 		set {_message} to {_output::1}
 		if {_message} is "<none>":
 			stop trigger
@@ -143,24 +143,24 @@ command //rem-msg-id <integer> <integer>:
 		#	Pour éviter qu'un modo supprime un message à la main par erreur x) mini sécuritée
 		if arg-2 is not 4568712:
 			stop trigger
-		execute "UPDATE {@from} SET `supprime` = '%player%' WHERE `id` = '%arg-1%'" {{@prefix}-sql}
+		execute "UPDATE {@from} SET `supprime` = '%player%' WHERE `id` = '%arg-1%'" in {{@prefix}-sql}
 		loop 200 times:
 			broadcast ""
-		execute "SELECT max(id) FROM {@from}" {{@prefix}-sql} and store the result in {_output::*}
+		execute "SELECT max(id) FROM {@from}" in {{@prefix}-sql} and store the result in {_output::*}
 		set {_lastid} to {_output::1}
 		set {_id} to {_lastid} - 100
 		if arg 1 < 100:
 			set {_id} to 1
 		loop 120 times:
-			execute "SELECT message FROM {@from} WHERE `id` = '%{_id}%'" {{@prefix}-sql} and store the result in {_output::*}
+			execute "SELECT message FROM {@from} WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
 			set {_message} to {_output::1}
 			if {_message} is "<none>":
 				stop trigger
-			execute "SELECT supprime FROM {@from} WHERE `id` = '%{_id}%'" {{@prefix}-sql} and store the result in {_output::*}
+			execute "SELECT supprime FROM {@from} WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
 			set {_supprime} to {_output::1}
-			execute "SELECT sender FROM {@from} WHERE `id` = '%{_id}%'" {{@prefix}-sql} and store the result in {_output::*}
+			execute "SELECT sender FROM {@from} WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
 			set {_player} to {_output::1} parsed as offline player
-			execute "SELECT type FROM {@from} WHERE `id` = '%{_id}%'" {{@prefix}-sql} and store the result in {_output::*}
+			execute "SELECT type FROM {@from} WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
 			set {_type} to {_output::1}
 			#	Préparations de base du message
 			replace all ":!S:" in {_message} with "'"
@@ -172,7 +172,7 @@ command //rem-msg-id <integer> <integer>:
 			if {_type} is "MessagePrive":
 				if {{@prefix}.msg.module-msg} is true:
 					if {{@prefix}.msg.msg-save} is true:
-						execute "SELECT destinataire FROM {@from} WHERE `id` = '%{_id}%'" {{@prefix}-sql} and store the result in {_output::*}
+						execute "SELECT destinataire FROM {@from} WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
 						set {_destinataire} to {_output::1} parsed as offline player
 						if {_destinataire} is online:
 							set {_destinataire} to {_destinataire} parsed as player
