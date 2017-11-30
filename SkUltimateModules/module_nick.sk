@@ -1,7 +1,7 @@
-#
+
 options:
-	prefix: "SkUltimateChat"
-	prefix-msg: "%{SkUltimateChat-commandes-prefix}%"
+	prefix: SkUltimateChat
+	prefix-msg: %{SkUltimateChat-commandes-prefix}%
 	perms: "perm.%{SkUltimateChat-permisssions-prefix}%"
 #
 
