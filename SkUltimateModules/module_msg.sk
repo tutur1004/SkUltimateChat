@@ -83,7 +83,7 @@ command /reply <text>:
 			if {{@prefix}.mods.module-mods} is true:
 				loop all players:
 					if {{@prefix}.chat.mods.%loop-player%} is true:
-						if loop-player has permisssion "{{@perms}.mods.perm.privatespy}":
+						if loop-player has permission "{{@perms}.mods.perm.privatespy}":
 							if loop-player is not player:
 								if loop-player is not {_destinataire}:
 									send "&c[SPY]&e|&6[&c%player%&6-->&c%{_destinataire}%&6] &r%{_message}%" to loop-player
