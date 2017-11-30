@@ -21,10 +21,10 @@ command /nick [<text>] [<text>]:
 		else if player has permission "{{@perms}.nick.perm.cmd-nick-other}":
 			if arg-2 is "reset":
 				delete {{@prefix}.nick.player.%arg-1%}
-				send "{@prefix-msg} &b%player% &6a reset votre pseudo!" to arg-1
+				send "{@prefix-msg} &b%player% &6a reset votre pseudo!" to arg-1 parsed as player
 				send "{@prefix-msg} &6Vous avez reset le pseudo de %arg-1%"
 			else:
 				set {{@prefix}.nick.player.%arg-1%} to arg-2
-				send "{@prefix-msg} &b%player% &6a définis votre pseudo sur &2%arg-2%" to arg-1
+				send "{@prefix-msg} &b%player% &6a définis votre pseudo sur &2%arg-2%" to arg-1 parsed as player
 				send "{@prefix-msg} &6Vous avez changé le pseudo de %arg-1%"
 #
