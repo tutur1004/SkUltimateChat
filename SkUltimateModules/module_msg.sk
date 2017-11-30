@@ -1,5 +1,3 @@
-#
-
 options:
 	prefix: SkUltimateChat
 	prefix-msg: %{SkUltimateChat-commandes-prefix}%
@@ -8,7 +6,7 @@ options:
 	from: `%{{@prefix}-sql.database}%`.`SkUltimateChat`
 #
 
-function SendPrivateMessage(p: player, name: player, send: bool, message: text):
+function SendPrivateMessage(p: player, name: player, send: boolean, message: text):
 	if {{@prefix}.emoji.module-emoji} is true:
 		if {{@prefix}.emoji.chat.%{_p}%} is true:
 			loop {{@prefix}.emoji::*}:
@@ -42,8 +40,7 @@ command /pm <player> <text>:
 							if {_message} contains "%loop-value%":
 								send "{@prefix-msg} &cVous ne pouvez pas envoyer de lien par message privé" to player
 								stop trigger
-		#	Check des URL
-		#update "INSERT INTO {@from} (`type`, `joueur`, `destinataire`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%arg-1%', '%arg-2%', '%now%')"
+		execute "INSERT INTO {@from} (`type`, `joueur`, `destinataire`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%arg-1%', '%arg-2%', '%now%')" in {{@prefix}-sql}
 		SendPrivateMessage(arg-1, player, true, {_message})
 		SendPrivateMessage(player, arg-1, false, {_message})
 		if {{@prefix}.mods.module-mods} is true:
@@ -80,8 +77,8 @@ command /reply <text>:
 								if {_message} contains "%loop-value%":
 									send "{@prefix-msg} &cVous ne pouvez pas envoyer de lien par message privé" to player
 									stop trigger
-			#	Check des URL
-			#update "INSERT INTO {@from} (`type`, `joueur`, `destinataire`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%{_destinataire}%', '%arg-2%', '%now%')"
+			execute "INSERT INTO {@from} (`type`, `joueur`, `destinataire`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%{_destinataire}%', '%arg-2%', '%now%')" in {{@prefix}-sql}
+
 			SendPrivateMessage({_destinataire}, player, true, {_message})
 			SendPrivateMessage(player, {_destinataire}, false, {_message})
 			if {{@prefix}.mods.module-mods} is true:
