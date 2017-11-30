@@ -81,7 +81,7 @@ command /reply <text>:
 			SendPrivateMessage({_destinataire}, player, true, {_message})
 			SendPrivateMessage(player, {_destinataire}, false, {_message})
 			if {{@prefix}.mods.module-mods} is true:
-				loop all player:
+				loop all players:
 					if {{@prefix}.chat.mods.%loop-player%} is true:
 						if loop-player has permisssion "{{@perms}.mods.perm.privatespy}":
 							if loop-player is not player:
