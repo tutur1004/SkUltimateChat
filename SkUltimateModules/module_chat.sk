@@ -35,6 +35,7 @@ function SendMessage(p: player, playername: text, message: text):
 
 #	Event d'ajout de message
 on chat:
+	set {_message} to message
 	#	On annule le message (pour le formater soit même)
 	cancel event
 	if {{@prefix}.censure.module-censure} is true:
