@@ -62,7 +62,7 @@ on chat:
 	set {_playername} to "Milekat"
 	if player has permission "%{{@perms}.mods.perm.colored-chat}%":
 		set {_message} to coloured {_message}
-	send "%uncoloured {_playerprefix}%>> &r%uncoloured {_message}%" to console
+	send "&r[CHAT] %uncoloured {_playername}% &r>> %uncoloured {_message}%" to console
 	#	Envois du message
 	loop all players:
 		SendMessage(loop-player, "%{_playername}%", "%{_message}%")
