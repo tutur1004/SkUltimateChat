@@ -2,8 +2,6 @@ options:
 	prefix: SkUltimateChat
 	prefix-msg: %{SkUltimateChat-commandes-prefix}%
 	perms: perm.%{SkUltimateChat-permissions-prefix}%
-	#	from = le nom de la BDD, à définir dans le fichier de config ? --> Non
-	from: `SkUltimateChat`
 #
 
 #	Le module prefix doit être chargé en 1er pour pouvoir load la function
@@ -56,14 +54,11 @@ on chat:
 	if {{@prefix}.emoji.module-emoji} is true:
 		loop {{@prefix}-emoji::*}:
 			replace all loop-value with loop-index in {_message}
-	set {_sql} to "INSERT INTO `SkUltimateChat` (`joueur1`, `message`, `date`) VALUES ('%player%', '%{_message}%', '%now%')"
+	set {_sql} to "INSERT INTO `SkUltimateChat` (`joueur1`, `message`, `date`) VALUES ('%player%', '%{_message}%', '%hours from date now%:%minutes from date now%:%seconds from date now% le %day of month from date now%/%month from date now%/%year from date now%')"
 	execute unsafe {_sql} in {{@prefix}-sql}
-	set {_sql} to ""
-	#execute unsafe "SELECT max(id) FROM `SkUltimateChat`" in {{@prefix}-sql} and store the result in {_output::*}
-	#set {_id} to "%{_output::max(id)::*}%"
 	replace all ":!S:" in {_message} with "'"
 	replace all ":!T:" in {_message} with """"
-	#set {_playername} to displayprefix(player)
+	set {_playername} to displayprefix(player)
 	set {_playername} to "Milekat"
 	if player has permission "%{{@perms}.mods.perm.colored-chat}%":
 		set {_message} to coloured {_message}
