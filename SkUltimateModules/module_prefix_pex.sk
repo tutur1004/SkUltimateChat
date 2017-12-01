@@ -1,8 +1,9 @@
 
 #	Module de prefix pour pex
+#	Il faut SkAction !
 
 #
 function prefix(p: player) :: text:
-	set {_prefix} to prefix of {_p}
+	set {_prefix} to {_p}'s prefix
 	return {_prefix}
 #
