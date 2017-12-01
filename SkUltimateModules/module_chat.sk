@@ -76,11 +76,11 @@ on chat:
 #	Reset du chat sur une ligne pour une personne
 function ResetSingleChat(p: player, id: integer):
 	execute "SELECT supprime FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-	set {_supprime} to {_output::1}
+	set {_supprime} to "%{_output::supprime::*}%"
 	execute "SELECT sender FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-	set {_player} to {_output::1} parsed as offline player
+	set {_player} to "%{_output::sender::*}%" parsed as offline player
 	execute "SELECT type FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-	set {_type} to {_output::1}
+	set {_type} to "%{_output::type::*}%"
 	#	Préparations de base du message
 	replace all ":!S:" in {_message} with "'"
 	replace all ":!T:" in {_message} with """"
@@ -92,7 +92,7 @@ function ResetSingleChat(p: player, id: integer):
 		if {{@prefix}.msg.module-msg} is true:
 			if {{@prefix}.msg.msg-save} is true:
 				execute "SELECT destinataire FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-				set {_destinataire} to {_output::1} parsed as offline player
+				set {_destinataire} to "%{_output::destinataire::*}%" parsed as offline player
 				if {_destinataire} is {_p}:
 					send "&6[&c%{_playername}%&6-->&aMoi&6] &r%{_message}%" to {_p}
 				else if {_player} is {_p}:
@@ -123,13 +123,13 @@ function ChatSendFull(p: player):
 	loop 200 times:
 		send "" to {_p}
 	execute "SELECT max(id) FROM `SkUltimateChat`" in {{@prefix}-sql} and store the result in {_output::*}
-	set {_lastid} to {_output::1}
+	set {_lastid} to "%{_output::max(id)::*}%" parsed as int
 	set {_id} to {_lastid} - 100
 	if {_lastid} < 100:
 		set {_id} to 1
 	loop 120 times:
 		execute "SELECT message FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-		set {_message} to {_output::1}
+		set {_message} to "%{_output::message::*}%"
 		if {_message} is "<none>":
 			stop trigger
 		ResetSingleChat({_p}, {_id})
@@ -151,21 +151,21 @@ command //rem-msg-id <integer> <integer>:
 		loop 200 times:
 			broadcast ""
 		execute "SELECT max(id) FROM `SkUltimateChat`" in {{@prefix}-sql} and store the result in {_output::*}
-		set {_lastid} to {_output::1}
+		set {_lastid} to "%{_output::max(id)::*}%"
 		set {_id} to {_lastid} - 100
 		if arg 1 < 100:
 			set {_id} to 1
 		loop 120 times:
 			execute "SELECT message FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-			set {_message} to {_output::1}
+			set {_message} to "%{_output::message::*}%"
 			if {_message} is "<none>":
 				stop trigger
 			execute "SELECT supprime FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-			set {_supprime} to {_output::1}
+			set {_supprime} to "%{_output::supprime::*}%"
 			execute "SELECT sender FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-			set {_player} to {_output::1} parsed as offline player
+			set {_player} to "%{_output::sender::*}%" parsed as offline player
 			execute "SELECT type FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-			set {_type} to {_output::1}
+			set {_type} to "%{_output::type::*}%"
 			#	Préparations de base du message
 			replace all ":!S:" in {_message} with "'"
 			replace all ":!T:" in {_message} with """"
@@ -177,7 +177,7 @@ command //rem-msg-id <integer> <integer>:
 				if {{@prefix}.msg.module-msg} is true:
 					if {{@prefix}.msg.msg-save} is true:
 						execute "SELECT destinataire FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-						set {_destinataire} to {_output::1} parsed as offline player
+						set {_destinataire} to "%{_output::destinataire::*}%" parsed as offline player
 						if {_destinataire} is online:
 							set {_destinataire} to {_destinataire} parsed as player
 							send "&6[&c%{_player}%&6-->&aMoi&6] &r%{_message}%" to {_destinataire}
