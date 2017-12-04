@@ -42,7 +42,8 @@ configs:
     #################################################################
     modules:
         player-prefix:
-            #    Renseignez ici le nom de votre plugin de permission, liste des plugins supportés sur le poste
+            #    Renseignez ici le nom de votre plugin de prefix, liste des plugins supportés sur le poste officiel.
+            #    (Contactez @tutur1004 pour ajouter la compatibilitée pour vos plugins)
             plugin-name: pex
         chat:
             #    Active ou désactive le module chat (Ce module ne peut être désactivé)
@@ -56,10 +57,6 @@ configs:
             white-url:
             - votresite.fr
             - skript-mc.fr
-            
-            #    Plugin de permission utilisé, voir la liste des plugins supportés sur le post officiel !
-            #    (Contacter @tutur1004 pour ajouter la compatibilitée pour vos plugins)
-            perm-plugin: Pex
             
             permissions:
                 #    Commande /chat cd <time>, permet au joueur de définir un CoolDown de chat
