@@ -10,7 +10,7 @@ command /nick [<text>] [<text>]:
 	permission message: "{@prefix-msg} <light red>Vous n'avez pas la permission de changer de pseudo."
 	trigger:
 		if arg-1 is not set:
-			send "{@prefix} &cErreur, &6la commande est &b/nick <pseudo>"
+			send "{@prefix-msg} &cErreur, &6la commande est &b/nick <pseudo>"
 		else if arg-2 is not set:
 			if arg-1 = "%player%":
 				delete {{@prefix}.nick.player.%player%}
