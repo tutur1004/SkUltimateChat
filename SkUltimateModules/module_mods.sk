@@ -6,6 +6,7 @@ options:
 
 on join:
 	delete {{@prefix}.chat.mods.%player%}
+	delete {{@prefix}.chat.mods.wait.%player%}
 #
 
 command /mods:
@@ -16,7 +17,7 @@ command /mods:
 	trigger:
 		set {_wait} to difference between {{@prefix}.chat.mods.wait.%player%} and now
 		if {{@prefix}.chat.mods.wait.%player%} is set:
-			set {_time} to 60 seconds
+			set {_time} to 30 seconds
 			remove {_wait} from {_time}
 			send "{@prefix-msg} <light red>Merci de patienter %{_time}%..."
 			stop trigger
@@ -33,6 +34,6 @@ command /mods:
 			send "{@prefix-msg} <green>Système de modération du chat Activé."
 			wait 5 ticks
 			send "{@prefix-msg} <light red>ATTENTION, ne pas abuser de la suppression de messages!!"
-		wait 1 minute
+		wait 20 seconds
 		delete {{@prefix}.chat.mods.wait.%player%}
 #
