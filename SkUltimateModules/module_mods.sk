@@ -14,16 +14,25 @@ command /mods:
 	executable by: players
 	description: "{@prefix-msg} &fcommande de modération du chat."
 	trigger:
+		set {_wait} to difference between {{@prefix}.chat.mods.wait.%player%} and now
+		if {{@prefix}.chat.mods.wait.%player%} is set:
+			set {_time} to 60 seconds
+			remove {_wait} from {_time}
+			send "{@prefix-msg} <light red>Merci de patienter %{_time}%..."
+			stop trigger
+		set {{@prefix}.chat.mods.wait.%player%} to now
 		if {{@prefix}.chat.mods.%player%} is true:
 			delete {{@prefix}.chat.mods.%player%}
 			ChatSendFull(player)
-			wait 2 seconds
+			wait 2.5 seconds
 			send "{@prefix-msg} <light red>Système de modération du chat désactivé."
 		else:
 			set {{@prefix}.chat.mods.%player%} to true
 			ChatSendFull(player)
-			wait 2 seconds
+			wait 2.5 seconds
 			send "{@prefix-msg} <green>Système de modération du chat Activé."
 			wait 5 ticks
 			send "{@prefix-msg} <light red>ATTENTION, ne pas abuser de la suppression de messages!!"
+		wait 1 minute
+		delete {{@prefix}.chat.mods.wait.%player%}
 #
