@@ -22,6 +22,7 @@ on load:
 	#	Load des valeurs de config globales (core) !
 	set {{@prefix}-permisssions-prefix} to yml value "configs.core.permission-prefix" of file "{@file}"
 	set {{@prefix}-commandes-prefix} to yml value "configs.core.commandes-prefix" of file "{@file}"
+	set {{@prefix}-server-name} to yml value "configs.core.server-name" of file "{@file}"
 	set {{@prefix}-host} to yml value "configs.core.MySQL.host" of file "{@file}"
 	set {{@prefix}-database} to yml value "configs.core.MySQL.database" of file "{@file}"
 	set {{@prefix}-username} to yml value "configs.core.MySQL.username" of file "{@file}"
