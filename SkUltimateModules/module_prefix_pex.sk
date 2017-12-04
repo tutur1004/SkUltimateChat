@@ -3,7 +3,20 @@
 #	Il faut SkAction !
 
 #
-function prefix(p: player) :: text:
-	set {_prefix} to {_p}'s prefix
+
+on join:
+	set {SkUltimateChat.prefix.pex.%{_p}%} to player's prefix
+#	'
+
+on quit:
+	set {SkUltimateChat.prefix.pex.%{_p}%} to player's prefix
+#	'
+
+function prefix(p: offline player) :: text:
+	if {_p} is online:
+		set {_prefix} to {_p}'s prefix
+		#	'
+	else:
+		set {_prefix} to {SkUltimateChat.prefix.pex.%{_p}%}
 	return {_prefix}
 #
