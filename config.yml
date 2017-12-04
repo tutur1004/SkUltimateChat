@@ -15,6 +15,9 @@ configs:
         #    Préfix des messages affichés dans les menus de commandes, laisser des " " !
         commandes-prefix: "&2[&6SkChat&2]"
         
+        #	Nom du serveur (Inutile de modifier si vous n'utilisez pas la version BungeeCord)
+        server-name: minecraft1
+        
         #    Information de connection MySQL, champs obligatoires ! Laisser les ""
         MySQL:
             #    Renseigner Ip:Port, les informations par défaut sont "localhost:3306".
@@ -25,14 +28,16 @@ configs:
             username: "minecraft"
             #    Password / Mot de Passe...			- Obligatoire même en local !!
             password: "abc"
+            #	 Si votre serveur utilise un SSL (Mettre False) !
+            SSL: false
         
     #################################################################
-    #    ▄▀▄ ▄▀▀▄ ▀█▀ █ █   █ ▄▀▄ ▀█▀ █ ▄▀▀▄ █▄ █   █ ▄▀▀▄ █   █    #
-    #    █▀█ █  ▄  █  █  █ █  █▀█  █  █ █  █ █ ▀█   █ █  ▄ █   ▀    #
-    #    ▀ ▀  ▀▀   ▀  ▀   ▀   ▀ ▀  ▀  ▀  ▀▀  ▀  ▀   ▀  ▀▀  ▀   ▀    #
-    #    Activer ou désactiver les fonctions principales du skript. #
-    #    Par défaut, false pour permettre à l'admin de configurer   #
-    #    le skript sans bloquer le chat :bruh:, finissez de config;)#
+    #   ▄▀▄ ▄▀▀▄ ▀█▀ █ █   █ ▄▀▄ ▀█▀ █ ▄▀▀▄ █▄ █   █ ▄▀▀▄ █   █     #
+    #   █▀█ █  ▄  █  █  █ █  █▀█  █  █ █  █ █ ▀█   █ █  ▄ █   ▀     #
+    #   ▀ ▀  ▀▀   ▀  ▀   ▀   ▀ ▀  ▀  ▀  ▀▀  ▀  ▀   ▀  ▀▀  ▀   ▀     #
+    #   Activer ou désactiver les fonctions principales du skript.  #
+    #   Par défaut, false pour permettre à l'admin de configurer    #
+    #   le skript sans bloquer le chat :bruh:, finissez de config;) #
         enable: false
     #################################################################
     modules:
@@ -41,7 +46,7 @@ configs:
             plugin-name: pex
         chat:
             #    Active ou désactive le module chat (Ce module ne peut être désactivé)
-            module-chat: true
+            module-chat: false
             
             #    Wipe du cache de messages au restart ? (true / false), si true les messages seront supprimés
             #    Si false, votre base SQL va vite être remplis (~50Mo par jours pour 1.000 joueurs) Attention
@@ -69,7 +74,7 @@ configs:
                 colored-chat: chat.color
         censure:
             #    Active ou désactive la censure d'URL de chat
-            module-censure: true
+            module-censure: false
             
             #    Active la censure des URL en msg (le module "msg" doit être activé)
             censure-msg: false
@@ -83,7 +88,7 @@ configs:
                 url-check: url.check
         mods:
             #    Active les options de suppression de messages ciblé dans le chat
-            module-mods: true
+            module-mods: false
             
             permissions:                
                 #    Commande /chat mod, permet de passer / sortir du mode modérateur chat
@@ -96,7 +101,7 @@ configs:
         msg:
             #    Active ou désactive le module msg
             #    Si false les messages privés ne seront pas gérés par SkUltimateChat
-            module-msg: true
+            module-msg: false
             
             #    Sauvegarde des Messages privés, (En cas de suppression d'un message, les MP seront réaffichés)
             msg-save: false
@@ -114,8 +119,12 @@ configs:
                 cmd-reply: cmd.reply
         emoji:
             #    Active ou désactive le module emoji, les émojis seront totalement désactivées !!
-            module-emoji: true
-   
+            module-emoji: false
+            
+            #    Hash pour chiffrement pour le pack d'emoji ! [Obligatoire]
+            #    Pour génerer un sha-1, je vous conseil d'aller sur ( http://www.sha1-online.com/ )
+            hash-pack: da39a3ee5e6b4b0d3255bfef95601890afd80709
+            
             #    Active la transformation automatique des émojis d'un message de joueur
             #    Note : Une permission permet de limiter sa !
             auto-emoji: true
@@ -133,7 +142,7 @@ configs:
                 cmd-emoji-list: cmd.emoji-list
         nick:
             #    Active ou désactive le module nick
-            module-nick: true
+            module-nick: false
             
             permissions:
                 #    /nick <name>, permet de changer sont pseudo dans le chat
