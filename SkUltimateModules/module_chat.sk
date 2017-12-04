@@ -9,9 +9,15 @@ function displayprefix(p: player) :: text:
 	set {_prefix} to prefix({_p})
 	if {{@prefix}.nick.module-nick} is true:
 		if {{@prefix}.nick.player.%{_p}%} is set:
-			set {_player} to "%{_prefix}% %{{@prefix}.nick.player.%{_p}%}%"
+			if {_prefix} is not "":
+				set {_player} to "%{_prefix}% %{{@prefix}.nick.player.%{_p}%}%"
+			else:
+				set {_player} to "%{{@prefix}.nick.player.%{_p}%}%"
 		else:
-			set {_player} to "%{_prefix}% %{_p}%"
+			if {_prefix} is not "":
+				set {_player} to "%{_prefix}% %{_p}%"
+			else:
+				set {_player} to "%{_p}%"
 	else:
 		set {_player} to "%{_prefix}% %{_p}%"
 	set {_player} to coloured {_player}
@@ -19,63 +25,33 @@ function displayprefix(p: player) :: text:
 #
 
 #	Mise en format d'un message
-function SendMessage(p: player, playername: text, message: text):
+function SendMessage(p: player, playername: text, message: text, id: integer):
 	if {{@prefix}.emoji.module-emoji} is true:
 		if {{@prefix}.emoji.chat.%{_p}%} is true:
 			loop {{@prefix}-emoji::*}:
 				replace all loop-index with loop-value in {_message}
 	if {{@prefix}.chat.mods.%{_p}%} is true:
 		replace all """" in {_message} with "“"
-		execute console command "tellraw %{_p}% [{""text"":""%{_playername}% &b» &r%{_message}%"",""color"":""gray""},{""text"":"" [KICK] "",""color"":""red"",""bold"":true,""clickEvent"":{""action"":""run_command"",""value"":""/kick %{_player}%""}},{""text"":"" [X] "",""color"":""red"",""bold"":true,""clickEvent"":{""action"":""run_command"",""value"":""//rem-msg-id %{_id}% 4568712""}}]"
+		execute console command "tellraw %{_p}% [{""text"":""%{_playername}% &b» &r%{_message}%"",""color"":""gray""},{""text"":"" [KICK] "",""color"":""red"",""bold"":true,""clickEvent"":{""action"":""run_command"",""value"":""/kick %{_player}%""}},{""text"":""[X] "",""color"":""red"",""bold"":true,""clickEvent"":{""action"":""run_command"",""value"":""rem-msg-id %{_id}%""}}]"
 	else:
 		send "%{_playername}% &b» &r%{_message}%" to {_p}
 #
 
-#	Event d'ajout de message
-on chat:
-	set {_message} to message
-	#	On annule le message (pour le formater soit même)
-	cancel event
-	if {{@prefix}.censure.module-censure} is true:
-		if player does not have permission "%{{@perms}.censure.perm.cmd-chatmods}%":
-			loop {{@prefix}.white-url::*}:
-				if {_msg} contains "%loop-value%":
-					send "{@prefix-msg} &aLe domaine &6%loop-value% &aest autorisé" to player
-					set {_ok} to true
-			if {_ok} is not true:
-				loop {{@prefix}.censure.url::*}:
-					if {_message} contains "%loop-value%":
-						send "{@prefix-msg} &cVous ne pouvez pas envoyer ce lien dans le chat" to player
-						send "{@prefix-msg} &cMerci de faire &6/url <lien internet>" to player
-						stop trigger
-	#
-	replace all "'" in {_message} with ":!S:"
-	replace all """" in {_message} with ":!T:"
-	if {{@prefix}.emoji.module-emoji} is true:
-		loop {{@prefix}-emoji::*}:
-			replace all loop-value with loop-index in {_message}
-	set {_sql} to "INSERT INTO `SkUltimateChat` (`joueur1`, `message`, `date`) VALUES ('%player%', '%{_message}%', '%hours from date now%:%minutes from date now%:%seconds from date now% le %day of month from date now%/%month from date now%/%year from date now%')"
-	execute unsafe {_sql} in {{@prefix}-sql}
-	replace all ":!S:" in {_message} with "'"
-	replace all ":!T:" in {_message} with """"
-	set {_playername} to displayprefix(player)
-	set {_playername} to "Milekat"
-	if player has permission "%{{@perms}.mods.perm.colored-chat}%":
-		set {_message} to coloured {_message}
-	send "&r[CHAT] %uncoloured {_playername}% &r>> %uncoloured {_message}%" to console
-	#	Envois du message
-	loop all players:
-		SendMessage(loop-player, "%{_playername}%", "%{_message}%")
-#
 
 #	Reset du chat sur une ligne pour une personne
 function ResetSingleChat(p: player, id: integer):
-	execute "SELECT supprime FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
+	set {_sql} to "SELECT supprime FROM `SkUltimateChat` WHERE `id` = '%{_id}%'"
+	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
 	set {_supprime} to "%{_output::supprime::*}%"
-	execute "SELECT sender FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-	set {_player} to "%{_output::sender::*}%" parsed as offline player
-	execute "SELECT type FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
+	set {_sql} to "SELECT joueur1 FROM `SkUltimateChat` WHERE `id` = '%{_id}%'"
+	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
+	set {_player} to "%{_output::joueur1::*}%" parsed as offline player
+	set {_sql} to "SELECT type FROM `SkUltimateChat` WHERE `id` = '%{_id}%'"
+	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
 	set {_type} to "%{_output::type::*}%"
+	set {_sql} to "SELECT message FROM `SkUltimateChat` WHERE `id` = '%{_id}%'"
+	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
+	set {_message} to "%{_output::message::*}%"
 	#	Préparations de base du message
 	replace all ":!S:" in {_message} with "'"
 	replace all ":!T:" in {_message} with """"
@@ -86,8 +62,9 @@ function ResetSingleChat(p: player, id: integer):
 	if {_type} is "MessagePrive":
 		if {{@prefix}.msg.module-msg} is true:
 			if {{@prefix}.msg.msg-save} is true:
-				execute "SELECT destinataire FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-				set {_destinataire} to "%{_output::destinataire::*}%" parsed as offline player
+				set {_sql} to "SELECT joueur2 FROM `SkUltimateChat` WHERE `id` = '%{_id}%'"
+				execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
+				set {_destinataire} to "%{_output::joueur2::*}%" parsed as offline player
 				if {_destinataire} is {_p}:
 					send "&6[&c%{_playername}%&6-->&aMoi&6] &r%{_message}%" to {_p}
 				else if {_player} is {_p}:
@@ -99,8 +76,8 @@ function ResetSingleChat(p: player, id: integer):
 							send "&c[SPY]&e|&6[&c%{_playername}%&6-->&c%{_destinataire}%&6] &r%{_message}%" to {_p}
 	else:
 		#	Message normal non supprimé, on envois la function pour les joueurs / modos
-		if {_supprime} is "Non supprimé":
-			SendMessage({_p}, "%{_playername}%", "%{_message}%")
+		if {_supprime} is "non-supprime":
+			SendMessage({_p}, "%{_playername}%", "%{_message}%", {_id})
 		#	Message de chat supprimé
 		else:
 			if {{@prefix}.chat.mods.%{_p}%} is true:
@@ -117,92 +94,87 @@ function ResetSingleChat(p: player, id: integer):
 function ChatSendFull(p: player):
 	loop 200 times:
 		send "" to {_p}
-	execute "SELECT max(id) FROM `SkUltimateChat`" in {{@prefix}-sql} and store the result in {_output::*}
+	set {_sql} to "SELECT max(id) FROM `SkUltimateChat`"
+	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
 	set {_lastid} to "%{_output::max(id)::*}%" parsed as int
 	set {_id} to {_lastid} - 100
 	if {_lastid} < 100:
 		set {_id} to 1
-	loop 120 times:
-		execute "SELECT message FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-		set {_message} to "%{_output::message::*}%"
-		if {_message} is "<none>":
-			stop trigger
-		ResetSingleChat({_p}, {_id})
+	set {_id.check.last} to 0
+	loop 50 times:
+		set {_sql} to "SELECT id FROM `SkUltimateChat` WHERE `id` = '%{_id}%'"
+		execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
+		set {_id.check} to "%{_output::id::*}%" parsed as int
+		if {_id.check} > {_id.check.last}:
+			ResetSingleChat({_p}, {_id})
+		else:
+			stop loop
+		set {_id.check.last} to {_id.check}
+		add 1 to {_id}
 #
-		
 
-#	Système de suppression de message, avec réafichage global après suppression
-command //rem-msg-id <integer> <integer>:
-	usage: "{@prefix-msg} <light red>Cette commande est réservée au modérateurs."
-	description: "<light red>Cette commande est réservée au modérateurs."
-	executable by: players
-	permission: "%{{@perms}.mods.perm.cmd-chatmods}%"
-	permission message: "{@prefix-msg} <light red>Cette commande est réservée au modérateurs."
-	trigger:
-		#	Pour éviter qu'un modo supprime un message à la main par erreur x) mini sécuritée
-		if arg-2 is not 4568712:
-			stop trigger
-		execute "UPDATE `SkUltimateChat` SET `supprime` = '%player%' WHERE `id` = '%arg-1%'" in {{@prefix}-sql}
-		loop 200 times:
-			broadcast ""
-		execute "SELECT max(id) FROM `SkUltimateChat`" in {{@prefix}-sql} and store the result in {_output::*}
+
+
+on chat:
+	set {_message} to message
+	cancel event
+	if "%{_message}%" does not start with "rem-msg-id ":
+		
+		#	Event d'ajout de message
+		
+		if player does not have permission "%{{@perms}.mods.perm.cmd-chatmods}%":
+			send "{@prefix-msg} <light red>Cette commande est réservée au modérateurs."
+		#	On annule le message (pour le formater soit même)
+		if {{@prefix}.censure.module-censure} is true:
+			if player does not have permission "%{{@perms}.censure.perm.cmd-chatmods}%":
+				loop {{@prefix}.white-url::*}:
+					if {_msg} contains "%loop-value%":
+						send "{@prefix-msg} &aLe domaine &6%loop-value% &aest autorisé" to player
+						set {_ok} to true
+				if {_ok} is not true:
+					loop {{@prefix}.censure.url::*}:
+						if {_message} contains "%loop-value%":
+							send "{@prefix-msg} &cVous ne pouvez pas envoyer ce lien dans le chat" to player
+							send "{@prefix-msg} &cMerci de faire &6/url <lien internet>" to player
+							stop trigger
+		#
+		replace all "'" in {_message} with ":!S:"
+		replace all """" in {_message} with ":!T:"
+		if {{@prefix}.emoji.module-emoji} is true:
+			loop {{@prefix}-emoji::*}:
+				replace all loop-value with loop-index in {_message}
+		set {_sql} to "INSERT INTO `SkUltimateChat` (`joueur1`, `message`, `date`) VALUES ('%player%', '%{_message}%', '%now%')"
+		execute unsafe {_sql} in {{@prefix}-sql}
+		replace all ":!S:" in {_message} with "'"
+		replace all ":!T:" in {_message} with """"
+		set {_playername} to displayprefix(player)
+		if player has permission "%{{@perms}.mods.perm.colored-chat}%":
+			set {_message} to coloured {_message}
+		send "&r[CHAT] %uncoloured {_playername}% &r> %uncoloured {_message}%" to console
+		#	Envois du message
+		set {_sql} to "SELECT max(id) FROM `SkUltimateChat`"
+		execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
+		set {_lastid} to "%{_output::max(id)::*}%" parsed as int
+		loop all players:
+			SendMessage(loop-player, "%{_playername}%", "%{_message}%", {_lastid})
+	
+	#	Système de suppression de message, avec réafichage global après suppression
+	
+	else if player has permission "%{{@perms}.mods.perm.cmd-chatmods}%":
+		set {_message::*} to {_message} split at " "
+		set {_Msg.Id} to "%{_message::2}%" parsed as int
+		set {_sql} to "UPDATE `SkUltimateChat` SET `supprime` = '%player%' WHERE `id` = '%{_Msg.Id}%'"
+		execute unsafe {_sql} in {{@prefix}-sql}
+		loop all players:
+			loop 200 times:
+				send "" to loop-player
+		set {_sql} to "SELECT max(id) FROM `SkUltimateChat`"
+		execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
 		set {_lastid} to "%{_output::max(id)::*}%"
 		set {_id} to {_lastid} - 100
-		if arg 1 < 100:
+		if {_Msg.Id} < 100:
 			set {_id} to 1
-		loop 120 times:
-			execute "SELECT message FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-			set {_message} to "%{_output::message::*}%"
-			if {_message} is "<none>":
-				stop trigger
-			execute "SELECT supprime FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-			set {_supprime} to "%{_output::supprime::*}%"
-			execute "SELECT sender FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-			set {_player} to "%{_output::sender::*}%" parsed as offline player
-			execute "SELECT type FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-			set {_type} to "%{_output::type::*}%"
-			#	Préparations de base du message
-			replace all ":!S:" in {_message} with "'"
-			replace all ":!T:" in {_message} with """"
-			set {_playername} to displayprefix({_player})
-			if {_player} has permission "%{{@perms}.mods.perm.colored-chat}%":
-				set {_message} to coloured {_message}
-			#	Check du type de message, si MP on compte differement	
-			if {_type} is "MessagePrive":
-				if {{@prefix}.msg.module-msg} is true:
-					if {{@prefix}.msg.msg-save} is true:
-						execute "SELECT destinataire FROM `SkUltimateChat` WHERE `id` = '%{_id}%'" in {{@prefix}-sql} and store the result in {_output::*}
-						set {_destinataire} to "%{_output::destinataire::*}%" parsed as offline player
-						if {_destinataire} is online:
-							set {_destinataire} to {_destinataire} parsed as player
-							send "&6[&c%{_player}%&6-->&aMoi&6] &r%{_message}%" to {_destinataire}
-						if {_player} is online:
-							set {_player} to {_player} parsed as player
-							send "&6[&aMoi&6-->&c%{_destinataire}%&6] &r%{_message}%" to {_player}
-						#	Message privé pour le mode [SPY]
-						if {{@prefix}.mods.module-mods} is true:
-							loop all players:
-								if {{@prefix}.chat.mods.%loop-player%} is true:
-									if loop-player has permission "{{@perms}.mods.perm.privatespy}":
-										if loop-player is not {_player}:
-											if loop-player is not {_destinataire}:
-												send "&c[SPY]&e|&6[&c%{_player}%&6-->&c%{_destinataire}%&6] &r%{_message}%" to loop-player
-			else:
-				#	Message normal non supprimé, on envois la function pour les joueurs / modos
-				if {_supprime} is "Non supprimé":
-					loop all players:
-						SendMessage(loop-player, "%{_playername}%", "%{_message}%")
-				#	Message de chat supprimé
-				else:
-					loop all players:
-						if {{@prefix}.chat.mods.%loop-player%} is true:
-							if {{@prefix}.emoji.module-emoji} is true:
-								if {{@prefix}.emoji.chat.%loop-player%} is true:
-									loop {{@prefix}-emoji::*}:
-										replace all loop-index with loop-value-3 in {_message}
-							execute console command "tellraw %loop-player% [{""text"":""<Message de %{_player}% supprimé par %{_supprime}%>"",""color"":""red"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""%{_message}%""}]}}}]"
-						else:
-							send "&c<Message de %{_player}% supprimé par %{_supprime}%>" to loop-player
-			#	Passage au message suivant !
-			add 1 to {_id}
+		loop all players:
+			ChatSendFull(loop-player)
 #
+
