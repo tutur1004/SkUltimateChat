@@ -9,22 +9,27 @@ command /nick [<text>] [<text>]:
 	permission: "%{{@perms}.nick.perm.cmd-nick}%"
 	permission message: "{@prefix-msg} <light red>Vous n'avez pas la permission de changer de pseudo."
 	trigger:
+		set {_arg1} to arg-1 parsed as offline player
 		if arg-1 is not set:
 			send "{@prefix-msg} &cErreur, &6la commande est &b/nick <pseudo>"
 		else if arg-2 is not set:
 			if arg-1 = "%player%":
 				delete {{@prefix}.nick.player.%player%}
-				send "{@prefix-msg} &6Pseudo reset !"				
+				send "{@prefix-msg} &6Pseudo reset !"
+				set {{@prefix}.playername.%player%} to displayprefix(player)
 			else:
 				set {{@prefix}.nick.player.%player%} to arg-1
 				send "{@prefix-msg} &6Pseudo définis sur &2%arg-1%"
+				set {{@prefix}.playername.%player%} to displayprefix(player)
 		else if player has permission "{{@perms}.nick.perm.cmd-nick-other}":
 			if arg-2 is "reset":
 				delete {{@prefix}.nick.player.%arg-1%}
 				send "{@prefix-msg} &b%player% &6a reset votre pseudo!" to arg-1 parsed as player
 				send "{@prefix-msg} &6Vous avez reset le pseudo de %arg-1%"
+				set {{@prefix}.playername.%arg-1%} to displayprefix({_arg1})
 			else:
 				set {{@prefix}.nick.player.%arg-1%} to arg-2
 				send "{@prefix-msg} &b%player% &6a définis votre pseudo sur &2%arg-2%" to arg-1 parsed as player
 				send "{@prefix-msg} &6Vous avez changé le pseudo de %arg-1%"
+				set {{@prefix}.playername.%arg-1%} to displayprefix({_arg1})
 #
