@@ -223,9 +223,6 @@ on load:#Emoji
 	set {{@prefix}-emoji:::miam:} to "透"
 	set {{@prefix}-emoji:::+} to "遡"
 	set {{@prefix}-emoji:::-} to "遢"
-	set {{@prefix}-emoji:::cut} to "遠"
-	set {{@prefix}-emoji:::bombe} to "遝"
-	set {{@prefix}-emoji:::gun} to "遞"
 	set {{@prefix}-emoji:::$} to "遜"
 	set {{@prefix}-emoji:::oklm} to "遣"
 #
