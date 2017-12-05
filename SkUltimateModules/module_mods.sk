@@ -24,16 +24,16 @@ command /mods:
 		set {{@prefix}.chat.mods.wait.%player%} to now
 		if {{@prefix}.chat.mods.%player%} is true:
 			delete {{@prefix}.chat.mods.%player%}
-			ChatSendFull(player)
+			ChatSendFull(player, 10)
 			wait 2.5 seconds
 			send "{@prefix-msg} <light red>Système de modération du chat désactivé."
 		else:
 			set {{@prefix}.chat.mods.%player%} to true
-			ChatSendFull(player)
+			ChatSendFull(player, 10)
 			wait 2.5 seconds
 			send "{@prefix-msg} <green>Système de modération du chat Activé."
 			wait 5 ticks
 			send "{@prefix-msg} <light red>ATTENTION, ne pas abuser de la suppression de messages!!"
-		wait 20 seconds
+		wait 26 seconds
 		delete {{@prefix}.chat.mods.wait.%player%}
 #
