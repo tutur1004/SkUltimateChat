@@ -2,8 +2,6 @@ options:
 	prefix: SkUltimateChat
 	prefix-msg: %{SkUltimateChat-commandes-prefix}%
 	perms: perm.%{SkUltimateChat-permisssions-prefix}%
-	#	from = le nom de la BDD, à définir dans le fichier de config ?
-	from: `%{{@prefix}-sql.database}%`.`SkUltimateChat`
 #
 
 #	loaded 	= pack activées
@@ -11,11 +9,9 @@ options:
 #	enable	= emoji mode on, mais pas forcément loaded donc pas chat
 
 #	Function by Snow-Pyon
-function packetRPSend(player: player, url: text, hash: text = ""):
+function packetRPSend(player: player, url: text, hash: text):
     set {_packet} to new play_server_resource_pack_send packet
     set string pinfo 0 of {_packet} to {_url}
-    if {_hash} = "":
-        set string pinfo 1 of {_packet} to ("%hashed {_url} using ""SHA-1""%") #Need of SkUtilities.
     send {_player} packet {_packet}
 #
 
@@ -24,17 +20,17 @@ on packet recieve:
 		set {_player} to event-player
 		set {_status} to packet field "status"
 		if "%{_status}%" = "SUCCESSFULLY_LOADED":
-			send "{@prefix} <gold>Émojies &2chargées." to {_player}
+			send "{@prefix-msg} <gold>Émojies &2chargées." to {_player}
 			set {{@prefix}.emoji.chat.%player%} to true
 			set {{@prefix}.emoji.loaded.%player%} to true
 		else if "%{_status}%" = "DECLINED":
-			send "{@prefix} <light red>Erreur de chargement des émojis." to {_player}
+			send "{@prefix-msg} <light red>Erreur de chargement des émojis." to {_player}
 			
 #
 
 on join:
 	if {{@prefix}.emoji.enable.%player%} is true:
-		packetRPSend(player, "https://www.dropbox.com/s/jjnuiuu70lngxmt/PWTG_Pack.zip?dl=0", "%{SkUltimateChat-hash}%")
+		packetRPSend(player, "http://www.pwtg.fr/minecraft/PWTG_Pack.zip", "%{{@prefix}.emoji.hash-pack}%")
 #
 on quit:
 	delete {{@prefix}.emoji.loaded.%player%}
@@ -63,10 +59,10 @@ command /emoji [<text>]:
 				stop trigger
 			set {{@prefix}.emoji.chat.%player%} to true
 			if {{@prefix}.emoji.loaded.%player%} is not set:
-				packetRPSend(player, "https://www.dropbox.com/s/jjnuiuu70lngxmt/PWTG_Pack.zip?dl=0", "%{SkUltimateChat-hash}%")
+				packetRPSend(player, "http://www.pwtg.fr/minecraft/PWTG_Pack.zip", "%{{@prefix}.emoji.hash-pack}%")
 			set {{@prefix}.emoji.loaded.%player%} to true
 			send "{@prefix-msg} &rVous avez activé les émojis, /emoji liste pour voir la liste."
-			ChatSendFull(player)
+			ChatSendFull(player, 10)
 			set {{@prefix}.emoji.wait.%player%} to true
 			wait 30 seconds
 			delete {{@prefix}.emoji.wait.%player%}
@@ -76,7 +72,7 @@ command /emoji [<text>]:
 				stop trigger
 			delete {{@prefix}.emoji.chat.%player%}
 			send "{@prefix-msg} &rVous avez désactivé les émojis."
-			ChatSendFull(player)
+			ChatSendFull(player, 10)
 			set {{@prefix}.emoji.wait.%player%} to true
 			wait 30 seconds
 			delete {{@prefix}.emoji.wait.%player%}
@@ -94,16 +90,12 @@ command /emoji [<text>]:
 				if {{@prefix}.emoji.loaded.%player%} is true:
 					send "&6--&2 Emoji &6--"
 					send "&6Shift&c' &6Cliquez sur une &bémoji&c, &6pour l'ajouter au message&c:"
-					set {_count} to 0
+					set {_tellraw.emoji.list} to ""
 					loop {{@prefix}-emoji::*}:
-						add 1 to {_count}
-					set {_loop} to 0
-					loop {{@prefix}-emoji::*}:
-						add 1 to {_loop}
-						#if player has permission "{@prefix}.emoji.%loop-index%":  --> Fonction pour des permission d'émoji individuelle
-						if {_loop} < {_count}:
-							set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%,"
-						set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%{""text"":""%loop-value%"",""insertion"":""%loop-value%"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""&3[Shift + Cli%loop-value%""}]}}}"
+						if "%{_tellraw.emoji.list}%" do not contain "%loop-value%":
+							if "%{_tellraw.emoji.list}%" is not "":
+								set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%,"
+							set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%{""text"":""%loop-value%"",""insertion"":""%loop-value%"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""<cyan>[Shift + Clique]<red>,<gold> pour mettre <lime>'<white>%loop-value%<lime>'""}]}}}"
 					execute console command "tellraw %player% [%{_tellraw.emoji.list}%]"
 				else:
 					send "{@prefix-msg} &cCette commande ne fonctionne qu'avec les émoji &a[ON]"
