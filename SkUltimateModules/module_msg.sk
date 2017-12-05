@@ -38,8 +38,9 @@ command /pm <player> <text>:
 							if {_message} contains "%loop-value%":
 								send "{@prefix-msg} &cVous ne pouvez pas envoyer de lien par message privé" to player
 								stop trigger
-		set {_sql} to "INSERT INTO `SkUltimateChat` (`types`, `joueur1`, `joueur2`, `message`, `date`) VALUES ('MessagePrive', '%player%', '%arg-1%', '%arg-2%', '%now%')"
-		execute unsafe {_sql} in {{@prefix}-sql}
+		if {{@prefix}.msg.msg-save} is true:
+			set {_sql} to "INSERT INTO `SkUltimateChat` (`types`, `joueur1`, `joueur2`, `message`, `date`) VALUES ('MessagePrive', '%player%', '%arg-1%', '%arg-2%', '%now%')"
+			execute unsafe {_sql} in {{@prefix}-sql}
 		SendPrivateMessage(arg-1, player, true, {_message})
 		SendPrivateMessage(player, arg-1, false, {_message})
 		if {{@prefix}.mods.module-mods} is true:
@@ -76,8 +77,9 @@ command /reply <text>:
 								if {_message} contains "%loop-value%":
 									send "{@prefix-msg} &cVous ne pouvez pas envoyer de lien par message privé" to player
 									stop trigger
-			set {_sql} to "INSERT INTO `SkUltimateChat` (`types`, `joueur1`, `joueur2`, `message`, `date`) VALUES ('MessagePrive', '%player%', '%{_destinataire}%', '%{_message}%', '%now%')"
-			execute unsafe {_sql} in {{@prefix}-sql}
+			if {{@prefix}.msg.msg-save} is true:
+				set {_sql} to "INSERT INTO `SkUltimateChat` (`types`, `joueur1`, `joueur2`, `message`, `date`) VALUES ('MessagePrive', '%player%', '%{_destinataire}%', '%{_message}%', '%now%')"
+				execute unsafe {_sql} in {{@prefix}-sql}
 			SendPrivateMessage({_destinataire}, player, true, {_message})
 			SendPrivateMessage(player, {_destinataire}, false, {_message})
 			if {{@prefix}.mods.module-mods} is true:
