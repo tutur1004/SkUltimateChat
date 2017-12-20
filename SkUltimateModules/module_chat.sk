@@ -147,7 +147,7 @@ on chat:
 		if {{@prefix}.emoji.module-emoji} is true:
 			loop {{@prefix}-emoji::*}:
 				replace all loop-value with loop-index in {_message}
-		set {_sql} to "INSERT INTO `SkUltimateChat` (`types`, `joueur1`, `message`, `date`) VALUES ('MessageGlobal', '%player%', '%{_message}%', '%now%')"
+		set {_sql} to "INSERT INTO `SkUltimateChat` (`types`, `joueur1`, `message`, `server`, `date`) VALUES ('MessageGlobal', '%player%', '%{_message}%', '%{{@prefix}-server-name}%', '%now%')"
 		execute unsafe {_sql} in {{@prefix}-sql}
 		execute "SELECT max(id) FROM `SkUltimateChat`" in {{@prefix}-sql} and store the result in {_id::*}
 		call custom event "send new SQL by id" to details {{_id::*}
