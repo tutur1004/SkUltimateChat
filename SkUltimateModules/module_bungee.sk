@@ -1,0 +1,28 @@
+options:
+	prefix: SkUltimateChat
+	prefix-msg: %{SkUltimateChat-commandes-prefix}%
+	perms: perm.%{SkUltimateChat-permissions-prefix}%
+#
+
+#	Redis request 1: type, 2: server-name, 3: message-id
+
+on redis msg:
+	set {_request::*} to "%redis message%" split at "&|splitredis|&"
+	if {_request::1} is "LastSQL":
+		if {_request::2} is not "%{{@prefix}-server-name}%":
+			set {_sql} to "SELECT * FROM `SkUltimateChat` WHERE `id` = '%{_request::3}%'"
+			execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_id::*}
+			if "%{_output::types::*}%" is "MessageGlobal":
+				set {_playername} to "%{{@prefix}.playername.%{_output::joueur1::*}%}%"
+				set {_id} to "%{_output::id::*}%" parsed as int
+				loop all players:
+					SendMessage(loop-player, "%{_playername}%", "%{_output::message::*}%", {_id})
+			else if "%{_output::types::*}%" is "MessagePrive":
+				set {_sender} to "%{_output::joueur1::*}%" parsed as offline player
+				set {_reciever} to "%{_output::joueur2::*}%" parsed as offline player
+				SendPrivateMessage({_reciever}, {_sender}, false, "%{_output::message::*}%")
+#
+
+evt "send new SQL by id":
+	send redis message "LastSQL&|splitredis|&%{{@prefix}-server-name}%&|splitredis|&%event-number%" over channel "SkUltimateChat"
+#
