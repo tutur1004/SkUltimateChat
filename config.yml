@@ -15,7 +15,7 @@ configs:
         #    Préfix des messages affichés dans les menus de commandes, laisser des " " !
         commandes-prefix: "&2[&6SkChat&2]"
         
-        #	Nom du serveur (Inutile de modifier si vous n'utilisez pas la version BungeeCord)
+        #    Nom du serveur (Inutile de modifier si vous n'utilisez pas la version BungeeCord)
         server-name: minecraft1
         
         #    Information de connection MySQL, champs obligatoires ! Laisser les ""
@@ -24,11 +24,11 @@ configs:
             host: "localhost:3306"
             #    Nom de votre base de données.
             database: "minecraft"
-            #    Login / Username / Utilisateur...	- Obligatoire même en local !!
+            #    Login / Username / Utilisateur...    - Obligatoire même en local !!
             username: "minecraft"
-            #    Password / Mot de Passe...			- Obligatoire même en local !!
+            #    Password / Mot de Passe...           - Obligatoire même en local !!
             password: "abc"
-            #	 Si votre serveur utilise un SSL (Mettre False) !
+            #     Si votre serveur utilise un SSL (Mettre False) !
             SSL: false
         
     #################################################################
@@ -76,7 +76,7 @@ configs:
             #    Active la censure des URL en msg (le module "msg" doit être activé)
             censure-msg: false
 
-            permissions:            
+            permissions:
                 #    Permission de ne pas avoir les URL moderés, permission nécessaire pour les liens en MP
                 url-bypass: url.bypass
                 
@@ -87,7 +87,7 @@ configs:
             #    Active les options de suppression de messages ciblé dans le chat
             module-mods: false
             
-            permissions:                
+            permissions:
                 #    Commande /chat mod, permet de passer / sortir du mode modérateur chat
                 #    Type: Modération
                 cmd-chatmods: cmd.chatmods
@@ -149,11 +149,35 @@ configs:
                 #    /nick <player> <name>, permet de changer le pseudo de quelqu'un
                 #    Type: Modération, Fun
                 cmd-nick-other: cmd.nick-other
+        bungee:
+            #    Active ou désactive le module bungeecord --> !!! Nécéssite plus d'addons !!!
+            module-bungee: true
+            
+            #    Permet de pister les joueur selon leur serveur lorsqu'ils sont online.
+            player-bungee: true
+            
+            #    Permet d'envoyer un message à quelqu'un sur un autre serveur
+            #    !! Nécessite module-msg: true !! -- !! Nécessite player-bungee: true !!
+            private-bungee: true
         # list:
             #    Module non Terminé
             #    Active ou désactive le contrôle du /nick, MODULE NON TERMINÉ, ne sert à rien d'activer
             # module-list: false
             
+            #    Affiche la liste des joueurs selon leur serveur
+            # list-bungee: true
+            
             # permissions:
                 #    /list, commande pour afficher la liste des joueurs
                 # cmd-list: cmd.list
+        # friend:
+            #    Module non Terminé
+            #    Active ou désactive la liste des friend connectés / déconnectés
+            # module-friend: false
+            
+            #    Affiche la liste des amis selon leur serveur
+            # friend-bungee: true
+            
+            # permissions:
+                #    /friend list, commande pour afficher la liste des joueurs
+                # cmd-friend: cmd.friend.list
