@@ -149,6 +149,8 @@ on chat:
 				replace all loop-value with loop-index in {_message}
 		set {_sql} to "INSERT INTO `SkUltimateChat` (`types`, `joueur1`, `message`, `date`) VALUES ('MessageGlobal', '%player%', '%{_message}%', '%now%')"
 		execute unsafe {_sql} in {{@prefix}-sql}
+		execute "SELECT max(id) FROM `SkUltimateChat`" in {{@prefix}-sql} and store the result in {_id::*}
+		call custom event "send new SQL by id" to details {{_id::*}
 		replace all ":!S:" in {_message} with "'"
 		replace all ":!T:" in {_message} with """"
 		set {_playername} to "%{{@prefix}.playername.%player%}%"
