@@ -255,6 +255,10 @@ on load:#Emoji
 		write "##" at line 1 to file "{@file}"
 		write "NSFW emojis:" at line 1 to file "{@file}"
 		write "##" at line 1 to file "{@file}"
+		set {_perm} to "%{{@perms}.emoji.perm.perm-emoji-nsfw}%"
+		replace all "<emoji-name>" with "*" in {_perm}
+		write "%{_perm}% = full NSFW permissions" at line 1 to file "{@file}"
+		write "##" at line 1 to file "{@file}"
 		loop {{@prefix}-emoji-nsfw::*}:
 			set {_perm} to "%{{@perms}.emoji.perm.perm-emoji-nsfw}%"
 			replace all "<emoji-name>" with "%loop-index%" in {_perm}
@@ -263,6 +267,10 @@ on load:#Emoji
 		set {_perm} to "%{{@perms}.emoji.perm.perm-emoji-normal}%"
 		replace all "<emoji-name>" with "%loop-index%" in {_perm}
 		write " - ""%loop-index%""  permission: %{_perm}%" at line 1 to file "{@file}"
+	write "##" at line 1 to file "{@file}"
+	set {_perm} to "%{{@perms}.emoji.perm.perm-emoji-nsfw}%"
+	replace all "<emoji-name>" with "*" in {_perm}
+	write "%{_perm}% = full NSFW permissions" at line 1 to file "{@file}"
 	write "##" at line 1 to file "{@file}"
 	write "Emojis:" at line 1 to file "{@file}"
 #
