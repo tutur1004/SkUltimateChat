@@ -18,7 +18,12 @@ command /nick [<text>] [<text>]:
 				send "{@prefix-msg} &6Pseudo reset !"
 				set {{@prefix}.playername.%player%} to displayprefix(player)
 			else:
+				if length of arg-1 > 32:
+					send "&cErreur: le pseudo ne peut faire plus de 32 caractères"
+					stop trigger
 				set {{@prefix}.nick.player.%player%} to arg-1
+				set {_sql} to "UPDATE `minecraft`.`SkUltimateChat-User` SET `nick` = '%arg-1%' WHERE `SkUltimateChat-User`.`name` = '%player%';"
+				execute unsafe {_sql} in {{@prefix}-sql}
 				send "{@prefix-msg} &6Pseudo définis sur &2%arg-1%"
 				set {{@prefix}.playername.%player%} to displayprefix(player)
 		else if player has permission "{{@perms}.nick.perm.cmd-nick-other}":
@@ -28,8 +33,19 @@ command /nick [<text>] [<text>]:
 				send "{@prefix-msg} &6Vous avez reset le pseudo de %arg-1%"
 				set {{@prefix}.playername.%arg-1%} to displayprefix({_arg1})
 			else:
+				if length of arg-2 > 32:
+					send "&cErreur: le pseudo ne peut faire plus de 32 caractères"
+					stop trigger
 				set {{@prefix}.nick.player.%arg-1%} to arg-2
+				set {_sql} to "UPDATE `minecraft`.`SkUltimateChat-User` SET `nick` = '%arg-2%' WHERE `SkUltimateChat-User`.`name` = '%arg-1%';"
+				execute unsafe {_sql} in {{@prefix}-sql}
 				send "{@prefix-msg} &b%player% &6a définis votre pseudo sur &2%arg-2%" to arg-1 parsed as player
 				send "{@prefix-msg} &6Vous avez changé le pseudo de %arg-1%"
 				set {{@prefix}.playername.%arg-1%} to displayprefix({_arg1})
 #
+on join:
+	set {_sql} to "SELECT `nick` FROM `SkUltimateChat-User` WHERE `name` = '%player%'"
+	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
+	set {{@prefix}.nick.player.%player%} to "%{_output::nick}%"
+	wait 1 tick
+	set {{@prefix}.playername.%player%} to displayprefix(player)
