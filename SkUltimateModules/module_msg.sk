@@ -1,7 +1,7 @@
 options:
 	prefix: SkUltimateChat
 	prefix-msg: %{SkUltimateChat-commandes-prefix}%
-	perms: perm.%{SkUltimateChat-permisssions-prefix}%
+	perms: perm.%{SkUltimateChat-permissions-prefix}%
 #
 
 function SendPrivateMessage(p: offline player, name: offline player, send: boolean, message: text):
@@ -39,9 +39,9 @@ command /pm <player> <text>:
 								send "{@prefix-msg} &cVous ne pouvez pas envoyer de lien par message privé" to player
 								stop trigger
 		if {{@prefix}.msg.msg-save} is true:
-			set {_sql} to "INSERT INTO `SkUltimateChat` (`types`, `joueur1`, `joueur2`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%arg-1%', '%arg-2%', '%{{@prefix}-server-name}%', '%now%')"
+			set {_sql} to "INSERT INTO `SkUltimateChat-Chat` (`types`, `joueur1`, `joueur2`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%arg-1%', '%arg-2%', '%{{@prefix}-server-name}%', '%now%')"
 			execute unsafe {_sql} in {{@prefix}-sql}
-			execute "SELECT max(id) FROM `SkUltimateChat`" in {{@prefix}-sql} and store the result in {_id::*}
+			execute "SELECT max(id) FROM `SkUltimateChat-Chat`" in {{@prefix}-sql} and store the result in {_id::*}
 			call custom event "send new SQL by id" to details {{_id::*}
 		SendPrivateMessage(arg-1, player, true, {_message})
 		SendPrivateMessage(player, arg-1, false, {_message})
@@ -82,9 +82,9 @@ command /reply <text>:
 									send "{@prefix-msg} &cVous ne pouvez pas envoyer de lien par message privé" to player
 									stop trigger
 			if {{@prefix}.msg.msg-save} is true:
-				set {_sql} to "INSERT INTO `SkUltimateChat` (`types`, `joueur1`, `joueur2`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%{_destinataire}%', '%{_message}%', '%{{@prefix}-server-name}%', '%now%')"
+				set {_sql} to "INSERT INTO `SkUltimateChat-Chat` (`types`, `joueur1`, `joueur2`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%{_destinataire}%', '%{_message}%', '%{{@prefix}-server-name}%', '%now%')"
 				execute unsafe {_sql} in {{@prefix}-sql}
-				execute "SELECT max(id) FROM `SkUltimateChat`" in {{@prefix}-sql} and store the result in {_id::*}
+				execute "SELECT max(id) FROM `SkUltimateChat-Chat`" in {{@prefix}-sql} and store the result in {_id::*}
 				call custom event "send new SQL by id" to details {{_id::*}
 			SendPrivateMessage({_destinataire}, player, true, {_message})
 			SendPrivateMessage(player, {_destinataire}, false, {_message})
