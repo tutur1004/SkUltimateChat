@@ -88,14 +88,14 @@ command /emoji [<text>]:
 				send "{@prefix-msg} &2Pour les activer dès maintenant &e/emoji on"
 		else if arg 1 is "liste" or "list":
 			if {{@prefix}.emoji.emoji-list} is true:
-				if player has permission "%{{@perms}.emoji.cmd-emoji-list}%":
+				if player has permission "%{{@perms}.emoji.perm.cmd-emoji-list}%":
 					if {{@prefix}.emoji.loaded.%player%} is true:
 						send "&6--&2 Emoji &6--"
 						send "&6Shift&c' &6Cliquez sur une &bémoji&c, &6pour l'ajouter au message&c:"
 						set {_tellraw.emoji.list} to "{""text"":""["",""color"":""gold""},{""text"":""Liste"",""color"":""dark_green""},{""text"":""] "",""color"":""gold""}"
 						loop {{@prefix}-emoji-normal::*}:
 							if "%{_tellraw.emoji.list}%" do not contain "%loop-value%":
-								set {_perm} to "%{{@perms}.emoji.perm-emoji-normal}%"
+								set {_perm} to "%{{@perms}.emoji.perm.perm-emoji-normal}%"
 								replace all "<emoji-name>" with "%loop-index%" in {_perm}
 								if player has permission "%{_perm}%":
 									if "%{_tellraw.emoji.list}%" is not "":
@@ -106,7 +106,7 @@ command /emoji [<text>]:
 							set {_tellraw.emoji.list} to "{""text"":""["",""color"":""gold""},{""text"":""NSFW"",""color"":""red""},{""text"":""] "",""color"":""gold""}"
 							loop {{@prefix}-emoji-nsfw::*}:
 								if "%{_tellraw.emoji.list}%" do not contain "%loop-value%":
-									set {_perm} to "%{{@perms}.emoji.perm-emoji-nsfw}%"
+									set {_perm} to "%{{@perms}.emoji.perm.perm-emoji-nsfw}%"
 									replace all "<emoji-name>" with "%loop-index%" in {_perm}
 									if player has permission "%{_perm}%":
 										if "%{_tellraw.emoji.list}%" is not "":
@@ -252,18 +252,17 @@ on load:#Emoji
 		set {{@prefix}-emoji-nsfw:::cut} to "遠"
 		set {{@prefix}-emoji-nsfw:::bombe} to "遝"
 		set {{@prefix}-emoji-nsfw:::gun} to "遞"
+		write "##" at line 1 to file "{@file}"
 		write "NSFW emojis:" at line 1 to file "{@file}"
-		write "##" at line 2 to file "{@file}"
+		write "##" at line 1 to file "{@file}"
 		loop {{@prefix}-emoji-nsfw::*}:
-			set {_line} to line count of file "{@file}"
-			set {_perm} to "%{{@perms}.emoji.perm-emoji-nsfw}%"
+			set {_perm} to "%{{@perms}.emoji.perm.perm-emoji-nsfw}%"
 			replace all "<emoji-name>" with "%loop-index%" in {_perm}
-			write " - %loop-index%  permission: %{_perm}%" at line {_line} to file "{@file}"
+			write " - ""%loop-index%""  permission: %{_perm}%" at line 1 to file "{@file}"
 	loop {{@prefix}-emoji-normal::*}:
-		set {_line} to line count of file "{@file}"
-		set {_perm} to "%{{@perms}.emoji.perm-emoji-normal}%"
+		set {_perm} to "%{{@perms}.emoji.perm.perm-emoji-normal}%"
 		replace all "<emoji-name>" with "%loop-index%" in {_perm}
-		write " - %loop-index%  permission: %{_perm}%" at line {_line} to file "{@file}"
-	write "##" at line {_line}+1 to file "{@file}"
+		write " - ""%loop-index%""  permission: %{_perm}%" at line 1 to file "{@file}"
+	write "##" at line 1 to file "{@file}"
 	write "Emojis:" at line 1 to file "{@file}"
 #
