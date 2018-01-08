@@ -4,7 +4,7 @@
 options:
 	file: plugins/SkUltimateChat/config.yml
 	prefix: SkUltimateChat
-	perms: perm.%{SkUltimateChat-permisssions-prefix}%
+	perms: perm.%{SkUltimateChat-permissions-prefix}%
 #
 on load:
 	wait 1 second
