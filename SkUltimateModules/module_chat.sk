@@ -5,24 +5,6 @@ options:
 #
 
 #	Le module prefix doit être chargé en 1er pour pouvoir load la function
-function displayprefix(p: offline player) :: text:
-	set {_prefix} to prefix({_p})
-	if {{@prefix}.nick.module-nick} is true:
-		if {{@prefix}.nick.player.%{_p}%} is set:
-			if {_prefix} is not "":
-				set {_player} to "%{_prefix}% %{{@prefix}.nick.player.%{_p}%}%"
-			else:
-				set {_player} to "%{{@prefix}.nick.player.%{_p}%}%"
-		else:
-			if {_prefix} is not "":
-				set {_player} to "%{_prefix}% %{_p}%"
-			else:
-				set {_player} to "%{_p}%"
-	else:
-		set {_player} to "%{_prefix}% %{_p}%"
-	set {_player} to coloured {_player}
-	return {_player}
-#
 
 #	Mise en format d'un message
 function SendMessage(p: player, playername: text, message: text, id: integer):
@@ -48,7 +30,18 @@ function ResetSingleChat(p: player, id: integer):
 	set {_message} to "%{_output::message::*}%"
 	#	Préparations de base du message
 	replace all ":!S:" in {_message} with "'"
-	set {_playername} to "%{{@prefix}.playername.%{_player}%}%"
+	#	Display name
+	set {_prefix} to prefix({_player})
+	set {_sql} to "SELECT `nick` FROM `SkUltimateChat-User` WHERE `name` = '%{_player}%'"
+	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
+	set {_playername} to "%{_output::nick::*}%"
+	if {_playername} is "no-nick":
+		set {_playername} to {_player}
+	if {_prefix} is not "":
+		set {_player} to "%{_prefix}% %{_playername}%"
+	else:
+		set {_player} to "%{_playername}%"
+	#	/Display name
 	if {_player} has permission "%{{@perms}.mods.perm.colored-chat}%":
 		set {_message} to coloured {_message}
 	#	Check du type de message, si MP on compte differement	
@@ -115,7 +108,6 @@ function ChatSendFull(p: player, NbMessage: int):
 #
 
 on join:
-	set {{@prefix}.playername.%player%} to displayprefix(player)
 	ChatSendFull(player, 10)
 #
 
@@ -153,7 +145,15 @@ on chat:
 		call custom event "send new SQL by id" to details {_id::*}
 		replace all ":!S:" in {_message} with "'"
 		replace all ":!T:" in {_message} with """"
-		set {_playername} to "%{{@prefix}.playername.%player%}%"
+		set {_sql} to "SELECT `nick` FROM `SkUltimateChat-User` WHERE `name` = '%player%'"
+		execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
+		set {_playername} to "%{_output::nick::*}%"
+		if {_playername} is "no-nick":
+			set {_playername} to player
+		if {_prefix} is not "":
+			set {_player} to "%{_prefix}% %{_playername}%"
+		else:
+			set {_player} to "%{_playername}%"
 		if player has permission "%{{@perms}.mods.perm.colored-chat}%":
 			set {_message} to coloured {_message}
 		send "&r[CHAT] %uncoloured {_playername}% &r> %uncoloured {_message}%" to console
