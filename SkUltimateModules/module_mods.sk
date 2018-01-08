@@ -1,7 +1,7 @@
 options:
 	prefix: SkUltimateChat
 	prefix-msg: %{SkUltimateChat-commandes-prefix}%
-	perms: perm.%{SkUltimateChat-permisssions-prefix}%
+	perms: perm.%{SkUltimateChat-permissions-prefix}%
 #
 
 on join:
