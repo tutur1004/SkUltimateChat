@@ -97,7 +97,7 @@ command /emoji [<text>]:
 							if "%{_tellraw.emoji.list}%" do not contain "%loop-value%":
 								set {_perm} to "%{{@perms}.emoji.perm-emoji-normal}%"
 								replace all "<emoji-name>" with "%loop-index%" in {_perm}
-								if player has permission "%{_perm}%"
+								if player has permission "%{_perm}%":
 									if "%{_tellraw.emoji.list}%" is not "":
 										set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%,"
 									set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%{""text"":""%loop-value%"",""insertion"":""%loop-value%"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""<cyan>[Shift + Clique]<red>,<gold> pour mettre <lime>'<white>%loop-value%<lime>'""}]}}}"
