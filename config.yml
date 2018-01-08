@@ -132,9 +132,6 @@ configs:
             #    Activer les emojis NSFW
             emoji-nsfw: true
             
-            #    Permission individuel pour chaque emoji (Plus d'infos dans la config des permissions)
-            emoji-uniqueperm: true
-            
             permissions:
                 #    /emoji on/mode/off, permet d'activer les émojis
                 #    Type: Fun
