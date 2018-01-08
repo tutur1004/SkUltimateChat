@@ -30,9 +30,10 @@ on load:
 	set {{@prefix}-SSL} to yml value "configs.core.MySQL.SSL" of file "{@file}"
 	set {{@prefix}-sql} to the database "mysql://%{{@prefix}-host}%/%{{@prefix}-database}%?user=%{{@prefix}-username}%&password=%{{@prefix}-password}%&useSSL=%{{@prefix}-SSL}%"
 	execute "CREATE TABLE IF NOT EXISTS `SkUltimateChat-Chat` (`id` int(11) NOT NULL,`types` varchar(20) DEFAULT NULL,`joueur1` varchar(64) DEFAULT NULL,`joueur2` varchar(64) DEFAULT NULL,`joueur3` varchar(64) DEFAULT NULL,`message` varchar(255) DEFAULT NULL,`server` varchar(32) DEFAULT NULL,`date` varchar(20) DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table du skript SkUltimateChat par tutur1004, merci de ne pas modifier manuellement les tables !';" in {{@prefix}-sql}
-	execute "ALTER TABLE `SkUltimateChat` ADD PRIMARY KEY (`id`);" in {{@prefix}-sql}
-	execute "ALTER TABLE `SkUltimateChat` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;" in {{@prefix}-sql}
-	execute "CREATE TABLE IF NOT EXISTS `SkUltimateChat-User` (`id` int(11) NOT NULL,`name` varchar(64) CHARACTER SET utf8 DEFAULT NULL,`nick` varchar(64) CHARACTER SET utf8 NOT NULL DEFAULT 'no-nick',`server-now` varchar(64) CHARACTER SET utf8 NOT NULL DEFAULT 'disctonect') ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table Table du skript SkUltimateChat par tutur1004, merci de ne pas modifier man';" in {{@prefix}-sql}
+	execute "ALTER TABLE `SkUltimateChat-Chat` ADD PRIMARY KEY (`id`);" in {{@prefix}-sql}
+	execute "ALTER TABLE `SkUltimateChat-Chat` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;" in {{@prefix}-sql}
+	execute "CREATE TABLE IF NOT EXISTS `SkUltimateChat-User` (`id` int(11) NOT NULL,`name` varchar(64) CHARACTER SET utf8 DEFAULT NULL,`nick` varchar(32) CHARACTER SET utf8 NOT NULL DEFAULT 'no-nick',`server-now` varchar(32) CHARACTER SET utf8 NOT NULL DEFAULT 'disctonect') ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table Table du skript SkUltimateChat par tutur1004, merci de ne pas modifier man';" in {{@prefix}-sql}
+	execute "ALTER TABLE `SkUltimateChat-User` ADD PRIMARY KEY (`id`);" in {{@prefix}-sql}
 	execute "ALTER TABLE `SkUltimateChat-User` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;" in {{@prefix}-sql}
 	#	Load des configuration de modules (noeuds)
 	set {_modules::*} to yml nodes "configs.modules" of file "{@file}"
@@ -79,3 +80,21 @@ on load:
 #
 on unload:
 	delete directory "plugins/Skript/scripts/SkUltimateModules"
+#
+
+on join:
+	set {_sql} to "SELECT `name` FROM `SkUltimateChat-User` WHERE `name` = '%player%'"
+	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
+	if "%{_output::name}%" not "%player%":
+		set {_sql} to "INSERT INTO `minecraft`.`SkUltimateChat-User` (`name`, `server-now`) VALUES ('%player%', '%{{@prefix}-server-name}%');"
+		execute unsafe {_sql} in {{@prefix}-sql}
+	else:
+		set {_sql} to "UPDATE `minecraft`.`SkUltimateChat-User` SET `server-now` = '%{{@prefix}-server-name}%' WHERE `SkUltimateChat-User`.`name` = '%player%';"
+		execute unsafe {_sql} in {{@prefix}-sql}
+#
+on quit:
+	set {_sql} to "UPDATE `minecraft`.`SkUltimateChat-User` SET `server-now` = 'disctonect' WHERE `SkUltimateChat-User`.`name` = '%player%';"
+	execute unsafe {_sql} in {{@prefix}-sql}
+
+
+
