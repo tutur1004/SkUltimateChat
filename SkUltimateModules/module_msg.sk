@@ -42,7 +42,7 @@ command /pm <player> <text>:
 			set {_sql} to "INSERT INTO `SkUltimateChat-Chat` (`types`, `joueur1`, `joueur2`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%arg-1%', '%arg-2%', '%{{@prefix}-server-name}%', '%now%')"
 			execute unsafe {_sql} in {{@prefix}-sql}
 			execute "SELECT max(id) FROM `SkUltimateChat-Chat`" in {{@prefix}-sql} and store the result in {_id::*}
-			call custom event "send new SQL by id" to details {{_id::*}
+			call custom event "send new SQL by id" to details {_id::*}
 		SendPrivateMessage(arg-1, player, true, {_message})
 		SendPrivateMessage(player, arg-1, false, {_message})
 		if {{@prefix}.mods.module-mods} is true:
@@ -85,7 +85,7 @@ command /reply <text>:
 				set {_sql} to "INSERT INTO `SkUltimateChat-Chat` (`types`, `joueur1`, `joueur2`, `message`, `server`, `date`) VALUES ('MessagePrive', '%player%', '%{_destinataire}%', '%{_message}%', '%{{@prefix}-server-name}%', '%now%')"
 				execute unsafe {_sql} in {{@prefix}-sql}
 				execute "SELECT max(id) FROM `SkUltimateChat-Chat`" in {{@prefix}-sql} and store the result in {_id::*}
-				call custom event "send new SQL by id" to details {{_id::*}
+				call custom event "send new SQL by id" to details {_id::*}
 			SendPrivateMessage({_destinataire}, player, true, {_message})
 			SendPrivateMessage(player, {_destinataire}, false, {_message})
 			if {{@prefix}.mods.module-mods} is true:
