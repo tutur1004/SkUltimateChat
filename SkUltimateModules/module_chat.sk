@@ -40,7 +40,7 @@ function SendMessage(p: player, playername: text, message: text, id: integer):
 
 #	Reset du chat sur une ligne pour une personne
 function ResetSingleChat(p: player, id: integer):
-	set {_sql} to "SELECT * FROM `SkUltimateChat` WHERE `id` = '%{_id}%'"
+	set {_sql} to "SELECT * FROM `SkUltimateChat-Chat` WHERE `id` = '%{_id}%'"
 	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
 	set {_supprime} to "%{_output::supprime::*}%"
 	set {_player} to "%{_output::joueur1::*}%" parsed as offline player
@@ -96,14 +96,14 @@ function ChatSendFull(p: player, NbMessage: int):
 	send "" to {_p}
 	send "" to {_p}
 	send "" to {_p}
-	set {_sql} to "SELECT `id` FROM `SkUltimateChat` WHERE `types` = 'MessageGlobal' ORDER BY `id` DESC LIMIT %{_NbMessage}%"
+	set {_sql} to "SELECT `id` FROM `SkUltimateChat-Chat` WHERE `types` = 'MessageGlobal' ORDER BY `id` DESC LIMIT %{_NbMessage}%"
 	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
 	set {_firstid} to "%{_output::id::%{_NbMessage}%}%" parsed as int
 	set {_id} to {_firstid}
 	set {_id.check.last} to {_id} - 1
 	loop 500 times:
 		delete {_output::*}
-		set {_sql} to "SELECT `id` FROM `SkUltimateChat` WHERE `id` = '%{_id}%' ORDER BY `id` DESC LIMIT 1"
+		set {_sql} to "SELECT `id` FROM `SkUltimateChat-Chat` WHERE `id` = '%{_id}%' ORDER BY `id` DESC LIMIT 1"
 		execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
 		set {_id.check} to "%{_output::id::*}%" parsed as int
 		if {_id.check} > {_id.check.last}:
@@ -147,9 +147,9 @@ on chat:
 		if {{@prefix}.emoji.module-emoji} is true:
 			loop {{@prefix}-emoji::*}:
 				replace all loop-value with loop-index in {_message}
-		set {_sql} to "INSERT INTO `SkUltimateChat` (`types`, `joueur1`, `message`, `server`, `date`) VALUES ('MessageGlobal', '%player%', '%{_message}%', '%{{@prefix}-server-name}%', '%now%')"
+		set {_sql} to "INSERT INTO `SkUltimateChat-Chat` (`types`, `joueur1`, `message`, `server`, `date`) VALUES ('MessageGlobal', '%player%', '%{_message}%', '%{{@prefix}-server-name}%', '%now%')"
 		execute unsafe {_sql} in {{@prefix}-sql}
-		execute "SELECT max(id) FROM `SkUltimateChat`" in {{@prefix}-sql} and store the result in {_id::*}
+		execute "SELECT max(id) FROM `SkUltimateChat-Chat`" in {{@prefix}-sql} and store the result in {_id::*}
 		call custom event "send new SQL by id" to details {{_id::*}
 		replace all ":!S:" in {_message} with "'"
 		replace all ":!T:" in {_message} with """"
@@ -158,7 +158,7 @@ on chat:
 			set {_message} to coloured {_message}
 		send "&r[CHAT] %uncoloured {_playername}% &r> %uncoloured {_message}%" to console
 		#	Envois du message
-		set {_sql} to "SELECT max(id) FROM `SkUltimateChat`"
+		set {_sql} to "SELECT max(id) FROM `SkUltimateChat-Chat`"
 		execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
 		set {_lastid} to "%{_output::max(id)::*}%" parsed as int
 		loop all players:
@@ -169,7 +169,7 @@ on chat:
 	else if player has permission "%{{@perms}.mods.perm.cmd-chatmods}%":
 		set {_message::*} to {_message} split at " "
 		set {_Msg.Id} to "%{_message::2}%" parsed as int
-		set {_sql} to "UPDATE `SkUltimateChat` SET `supprime` = '%player%' WHERE `id` = '%{_Msg.Id}%'"
+		set {_sql} to "UPDATE `SkUltimateChat-Chat` SET `supprime` = '%player%' WHERE `id` = '%{_Msg.Id}%'"
 		execute unsafe {_sql} in {{@prefix}-sql}
 		loop all players:
 			ChatSendFull(loop-player, 30)
