@@ -20,7 +20,7 @@ on load:
 		stop trigger
 	create directory "plugins/Skript/scripts/SkUltimateModules"
 	#	Load des valeurs de config globales (core) !
-	set {{@prefix}-permisssions-prefix} to yml value "configs.core.permission-prefix" of file "{@file}"
+	set {{@prefix}-permissions-prefix} to yml value "configs.core.permission-prefix" of file "{@file}"
 	set {{@prefix}-commandes-prefix} to yml value "configs.core.commandes-prefix" of file "{@file}"
 	set {{@prefix}-server-name} to yml value "configs.core.server-name" of file "{@file}"
 	set {{@prefix}-host} to yml value "configs.core.MySQL.host" of file "{@file}"
