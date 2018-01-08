@@ -43,9 +43,3 @@ command /nick [<text>] [<text>]:
 				send "{@prefix-msg} &6Vous avez changé le pseudo de %arg-1%"
 				set {{@prefix}.playername.%arg-1%} to displayprefix({_arg1})
 #
-on join:
-	set {_sql} to "SELECT `nick` FROM `SkUltimateChat-User` WHERE `name` = '%player%'"
-	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
-	set {{@prefix}.nick.player.%player%} to "%{_output::nick}%"
-	wait 1 tick
-	set {{@prefix}.playername.%player%} to displayprefix(player)
