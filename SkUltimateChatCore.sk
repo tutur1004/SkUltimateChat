@@ -85,7 +85,7 @@ on unload:
 on join:
 	set {_sql} to "SELECT `name` FROM `SkUltimateChat-User` WHERE `name` = '%player%'"
 	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
-	if "%{_output::name}%" not "%player%":
+	if "%{_output::name::*}%" is not "%player%":
 		set {_sql} to "INSERT INTO `minecraft`.`SkUltimateChat-User` (`name`, `server-now`) VALUES ('%player%', '%{{@prefix}-server-name}%');"
 		execute unsafe {_sql} in {{@prefix}-sql}
 	else:
