@@ -248,22 +248,22 @@ on load:#Emoji
 	wait 1 tick
 	create file "{@file}"
 	wait 1 tick
-	write "Emojis:" at line 1 to file "{@file}"
+	if {{@prefix}.emoji.emoji-nsfw} is true:
+		set {{@prefix}-emoji-nsfw:::cut} to "遠"
+		set {{@prefix}-emoji-nsfw:::bombe} to "遝"
+		set {{@prefix}-emoji-nsfw:::gun} to "遞"
+		write "NSFW emojis:" at line 1 to file "{@file}"
+		write "##" at line 2 to file "{@file}"
+		loop {{@prefix}-emoji-nsfw::*}:
+			set {_line} to line count of file "{@file}"
+			set {_perm} to "%{{@perms}.emoji.perm-emoji-nsfw}%"
+			replace all "<emoji-name>" with "%loop-index%" in {_perm}
+			write " - %loop-index%  permission: %{_perm}%" at line {_line} to file "{@file}"
 	loop {{@prefix}-emoji-normal::*}:
 		set {_line} to line count of file "{@file}"
 		set {_perm} to "%{{@perms}.emoji.perm-emoji-normal}%"
 		replace all "<emoji-name>" with "%loop-index%" in {_perm}
 		write " - %loop-index%  permission: %{_perm}%" at line {_line} to file "{@file}"
 	write "##" at line {_line}+1 to file "{@file}"
-	if {{@prefix}.emoji.emoji-nsfw} is true:
-		set {{@prefix}-emoji-nsfw:::cut} to "遠"
-		set {{@prefix}-emoji-nsfw:::bombe} to "遝"
-		set {{@prefix}-emoji-nsfw:::gun} to "遞"
-		write "NSFW emojis:" at line {_line}+2 to file "{@file}"
-		write "##" at line {_line}+3 to file "{@file}"
-		loop {{@prefix}-emoji-nsfw::*}:
-			set {_line} to line count of file "{@file}"
-			set {_perm} to "%{{@perms}.emoji.perm-emoji-nsfw}%"
-			replace all "<emoji-name>" with "%loop-index%" in {_perm}
-			write " - %loop-index%  permission: %{_perm}%" at line {_line} to file "{@file}"
+	write "Emojis:" at line 1 to file "{@file}"
 #
