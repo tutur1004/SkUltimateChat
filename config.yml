@@ -75,7 +75,7 @@ configs:
             
             #    Active la censure des URL en msg (le module "msg" doit être activé)
             censure-msg: false
-
+            
             permissions:
                 #    Permission de ne pas avoir les URL moderés, permission nécessaire pour les liens en MP
                 url-bypass: url.bypass
@@ -129,6 +129,12 @@ configs:
             #    Active la commande /emoji list
             emoji-list: true
             
+            #    Activer les emojis NSFW
+            emoji-nsfw: true
+            
+            #    Permission individuel pour chaque emoji (Plus d'infos dans la config des permissions)
+            emoji-uniqueperm: true
+            
             permissions:
                 #    /emoji on/mode/off, permet d'activer les émojis
                 #    Type: Fun
@@ -137,6 +143,12 @@ configs:
                 #    /emoji list, affiche la liste des émojis et permet de les inserrer
                 #    Type: Fun
                 cmd-emoji-list: cmd.emoji-list
+                
+                #    permission individuel pour emoji, ce réferer au fichier "emoji-list.txt"
+                #    cette ligne doit contenir obligatoirement <emoji-name>
+                perm-emoji-normal: perm-emoji.normal.<emoji-name>
+                #    permissions NSFW, doit contenir obligatoirement <emoji-name>
+                perm-emoji-nsfw: perm-emoji.nsfw.<emoji-name>
         nick:
             #    Active ou désactive le module nick
             module-nick: false
