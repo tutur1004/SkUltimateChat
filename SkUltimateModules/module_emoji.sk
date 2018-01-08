@@ -270,7 +270,7 @@ on load:#Emoji
 	write "##" at line 1 to file "{@file}"
 	set {_perm} to "%{{@perms}.emoji.perm.perm-emoji-nsfw}%"
 	replace all "<emoji-name>" with "*" in {_perm}
-	write "%{_perm}% = full NSFW permissions" at line 1 to file "{@file}"
+	write "%{_perm}% = full permissions" at line 1 to file "{@file}"
 	write "##" at line 1 to file "{@file}"
 	write "Emojis:" at line 1 to file "{@file}"
 #
