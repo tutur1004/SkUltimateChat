@@ -54,7 +54,7 @@ command /pm <player> <text>:
 								send "&c[SPY]&e|&6[&c%player%&6-->&c%arg-1%&6] &r%{_message}%" to loop-player
 		set {{@prefix}.lastmsg.%player%} to arg-1
 		set {{@prefix}.lastmsg.%arg 1%} to player
-		set {_details::*} to player, "%arg-1%&|splitmsg|&%arg-2%"
+		set {_details::*} to player and "%arg-1%&|splitmsg|&%arg-2%"
 		call custom event "send private msg" to details {_details::*}
 #
 
