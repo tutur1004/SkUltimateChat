@@ -150,7 +150,7 @@ on chat:
 		set {_sql} to "INSERT INTO `SkUltimateChat-Chat` (`types`, `joueur1`, `message`, `server`, `date`) VALUES ('MessageGlobal', '%player%', '%{_message}%', '%{{@prefix}-server-name}%', '%now%')"
 		execute unsafe {_sql} in {{@prefix}-sql}
 		execute "SELECT max(id) FROM `SkUltimateChat-Chat`" in {{@prefix}-sql} and store the result in {_id::*}
-		call custom event "send new SQL by id" to details {{_id::*}
+		call custom event "send new SQL by id" to details {_id::*}
 		replace all ":!S:" in {_message} with "'"
 		replace all ":!T:" in {_message} with """"
 		set {_playername} to "%{{@prefix}.playername.%player%}%"
