@@ -1,7 +1,8 @@
 options:
 	prefix: SkUltimateChat
 	prefix-msg: %{SkUltimateChat-commandes-prefix}%
-	perms: perm.%{SkUltimateChat-permisssions-prefix}%
+	perms: perm.%{SkUltimateChat-permissions-prefix}%
+	file: plugins/SkUltimateChat/emoji.txt
 #
 
 #	loaded 	= pack activées
@@ -10,9 +11,9 @@ options:
 
 #	Function by Snow-Pyon
 function packetRPSend(player: player, url: text, hash: text):
-    set {_packet} to new play_server_resource_pack_send packet
-    set string pinfo 0 of {_packet} to {_url}
-    send {_player} packet {_packet}
+	set {_packet} to new play_server_resource_pack_send packet
+	set string pinfo 0 of {_packet} to {_url}
+	send {_player} packet {_packet}
 #
 
 on packet recieve:
@@ -87,142 +88,182 @@ command /emoji [<text>]:
 				send "{@prefix-msg} &2Pour les activer dès maintenant &e/emoji on"
 		else if arg 1 is "liste" or "list":
 			if {{@prefix}.emoji.emoji-list} is true:
-				if {{@prefix}.emoji.loaded.%player%} is true:
-					send "&6--&2 Emoji &6--"
-					send "&6Shift&c' &6Cliquez sur une &bémoji&c, &6pour l'ajouter au message&c:"
-					set {_tellraw.emoji.list} to ""
-					loop {{@prefix}-emoji::*}:
-						if "%{_tellraw.emoji.list}%" do not contain "%loop-value%":
-							if "%{_tellraw.emoji.list}%" is not "":
-								set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%,"
-							set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%{""text"":""%loop-value%"",""insertion"":""%loop-value%"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""<cyan>[Shift + Clique]<red>,<gold> pour mettre <lime>'<white>%loop-value%<lime>'""}]}}}"
-					execute console command "tellraw %player% [%{_tellraw.emoji.list}%]"
+				if player has permission "%{{@perms}.emoji.cmd-emoji-list}%":
+					if {{@prefix}.emoji.loaded.%player%} is true:
+						send "&6--&2 Emoji &6--"
+						send "&6Shift&c' &6Cliquez sur une &bémoji&c, &6pour l'ajouter au message&c:"
+						set {_tellraw.emoji.list} to "{""text"":""["",""color"":""gold""},{""text"":""Liste"",""color"":""dark_green""},{""text"":""] "",""color"":""gold""}"
+						loop {{@prefix}-emoji-normal::*}:
+							if "%{_tellraw.emoji.list}%" do not contain "%loop-value%":
+								set {_perm} to "%{{@perms}.emoji.perm-emoji-normal}%"
+								replace all "<emoji-name>" with "%loop-index%" in {_perm}
+								if player has permission "%{_perm}%"
+									if "%{_tellraw.emoji.list}%" is not "":
+										set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%,"
+									set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%{""text"":""%loop-value%"",""insertion"":""%loop-value%"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""<cyan>[Shift + Clique]<red>,<gold> pour mettre <lime>'<white>%loop-value%<lime>'""}]}}}"
+						execute console command "tellraw %player% [%{_tellraw.emoji.list}%]"
+						if {{@prefix}.emoji.emoji-nsfw} is true:
+							set {_tellraw.emoji.list} to "{""text"":""["",""color"":""gold""},{""text"":""NSFW"",""color"":""red""},{""text"":""] "",""color"":""gold""}"
+							loop {{@prefix}-emoji-nsfw::*}:
+								if "%{_tellraw.emoji.list}%" do not contain "%loop-value%":
+									set {_perm} to "%{{@perms}.emoji.perm-emoji-nsfw}%"
+									replace all "<emoji-name>" with "%loop-index%" in {_perm}
+									if player has permission "%{_perm}%"
+										if "%{_tellraw.emoji.list}%" is not "":
+											set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%,"
+										set {_tellraw.emoji.list} to "%{_tellraw.emoji.list}%{""text"":""%loop-value%"",""insertion"":""%loop-value%"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""<cyan>[Shift + Clique]<red>,<gold> pour mettre <lime>'<white>%loop-value%<lime>'""}]}}}"
+							execute console command "tellraw %player% [%{_tellraw.emoji.list}%]"
+					else:
+						send "{@prefix-msg} &cCette commande ne fonctionne qu'avec les émoji &a[ON]"
+						send "{@prefix-msg} &eFaites&c,&e /emoji on&c!"
 				else:
-					send "{@prefix-msg} &cCette commande ne fonctionne qu'avec les émoji &a[ON]"
-					send "{@prefix-msg} &eFaites&c,&e /emoji on&c!"
+					send "{@prefix-msg} &cCette commande ne vous ai pas permise!"
 			else:
 				send "{@prefix-msg} &cCette commande est désactivée!"
 #
 
 
 on load:#Emoji
-	delete {{@prefix}-emoji::*}
-	set {{@prefix}-emoji:::bowtie:} to "退"
-	set {{@prefix}-emoji::^_^} to "送"
-	set {{@prefix}-emoji:::laughing:} to "适"
-	set {{@prefix}-emoji::>_<} to "适"
-	set {{@prefix}-emoji:::]} to "逃"
-	set {{@prefix}-emoji:::D} to "逄"
-	set {{@prefix}-emoji:::d} to "逄"
-	set {{@prefix}-emoji::c:} to "逅"
-	set {{@prefix}-emoji::;]} to "逆"
-	set {{@prefix}-emoji::<3_<3} to "逇"
-	set {{@prefix}-emoji::kisss} to "逈"
-	set {{@prefix}-emoji::kiss} to "选"
+	delete {{@prefix}-emoji-normal::*}
+	set {{@prefix}-emoji-normal:::bowtie:} to "退"
+	set {{@prefix}-emoji-normal::^_^} to "送"
+	set {{@prefix}-emoji-normal:::laughing:} to "适"
+	set {{@prefix}-emoji-normal::>_<} to "适"
+	set {{@prefix}-emoji-normal:::]} to "逃"
+	set {{@prefix}-emoji-normal:::D} to "逄"
+	set {{@prefix}-emoji-normal:::d} to "逄"
+	set {{@prefix}-emoji-normal::c:} to "逅"
+	set {{@prefix}-emoji-normal::;]} to "逆"
+	set {{@prefix}-emoji-normal::<3_<3} to "逇"
+	set {{@prefix}-emoji-normal::kisss} to "逈"
+	set {{@prefix}-emoji-normal::kiss} to "选"
 	#double way
-	set {{@prefix}-emoji::o_o} to "逊"
-	set {{@prefix}-emoji:::relieved:} to "逋"
-	set {{@prefix}-emoji:::satisfied:} to "逌"
-	set {{@prefix}-emoji:::grin:} to "逍"
-	set {{@prefix}-emoji::;)} to "逎"
-	set {{@prefix}-emoji::;p} to "逐"
-	set {{@prefix}-emoji::;d} to "逑"
-	set {{@prefix}-emoji::;P} to "逐"
-	set {{@prefix}-emoji::;D} to "逑"
-	set {{@prefix}-emoji:::)} to "递"
-	set {{@prefix}-emoji:::3} to "逓"
-	set {{@prefix}-emoji::;3} to "途"
+	set {{@prefix}-emoji-normal::o_o} to "逊"
+	set {{@prefix}-emoji-normal:::relieved:} to "逋"
+	set {{@prefix}-emoji-normal:::satisfied:} to "逌"
+	set {{@prefix}-emoji-normal:::grin:} to "逍"
+	set {{@prefix}-emoji-normal::;)} to "逎"
+	set {{@prefix}-emoji-normal::;p} to "逐"
+	set {{@prefix}-emoji-normal::;d} to "逑"
+	set {{@prefix}-emoji-normal::;P} to "逐"
+	set {{@prefix}-emoji-normal::;D} to "逑"
+	set {{@prefix}-emoji-normal:::)} to "递"
+	set {{@prefix}-emoji-normal:::3} to "逓"
+	set {{@prefix}-emoji-normal::;3} to "途"
 	#double way
-	set {{@prefix}-emoji:::P} to "逕"
-	set {{@prefix}-emoji:::p} to "逕"
-	set {{@prefix}-emoji:::z} to "逖"
-	set {{@prefix}-emoji:::worried:} to "逗"
+	set {{@prefix}-emoji-normal:::P} to "逕"
+	set {{@prefix}-emoji-normal:::p} to "逕"
+	set {{@prefix}-emoji-normal:::z} to "逖"
+	set {{@prefix}-emoji-normal:::worried:} to "逗"
 	#double wai
-	set {{@prefix}-emoji:::(} to "逘"
-	set {{@prefix}-emoji:::frowning:} to "逘"
-	set {{@prefix}-emoji::D:} to "這"
-	set {{@prefix}-emoji:::oo} to "通"
-	set {{@prefix}-emoji:::o} to "遭"
-	set {{@prefix}-emoji:::x} to "遮"
-	set {{@prefix}-emoji::Skype} to "適"
-	set {{@prefix}-emoji::skype} to "適"
-	set {{@prefix}-emoji::hhhh} to "逛"
-	set {{@prefix}-emoji:::s} to "逜"
-	set {{@prefix}-emoji:::hushed:} to "逝"
-	set {{@prefix}-emoji::-_-} to "逞"
-	set {{@prefix}-emoji:::/} to "速"
-	set {{@prefix}-emoji::':D:} to "造"
+	set {{@prefix}-emoji-normal:::(} to "逘"
+	set {{@prefix}-emoji-normal:::frowning:} to "逘"
+	set {{@prefix}-emoji-normal::D:} to "這"
+	set {{@prefix}-emoji-normal:::oo} to "通"
+	set {{@prefix}-emoji-normal:::o} to "遭"
+	set {{@prefix}-emoji-normal:::x} to "遮"
+	set {{@prefix}-emoji-normal::Skype} to "適"
+	set {{@prefix}-emoji-normal::skype} to "適"
+	set {{@prefix}-emoji-normal::hhhh} to "逛"
+	set {{@prefix}-emoji-normal:::s} to "逜"
+	set {{@prefix}-emoji-normal:::hushed:} to "逝"
+	set {{@prefix}-emoji-normal::-_-} to "逞"
+	set {{@prefix}-emoji-normal:::/} to "速"
+	set {{@prefix}-emoji-normal::':D:} to "造"
 	#'
-	set {{@prefix}-emoji::':(} to "逡"
+	set {{@prefix}-emoji-normal::':(} to "逡"
 	#'
-	set {{@prefix}-emoji:::disappointed_relieved:} to "逢"
-	set {{@prefix}-emoji:::weary:} to "連"
-	set {{@prefix}-emoji::v_v} to "逤"
-	set {{@prefix}-emoji:::disappointed:} to "逥"
-	set {{@prefix}-emoji::>_<} to "逦"
-	set {{@prefix}-emoji:::fearful:} to "逧"
-	set {{@prefix}-emoji:::cold_sweat:} to "逨"
-	set {{@prefix}-emoji::>n<} to "逩"
-	set {{@prefix}-emoji:::'(} to "逪"
+	set {{@prefix}-emoji-normal:::disappointed_relieved:} to "逢"
+	set {{@prefix}-emoji-normal:::weary:} to "連"
+	set {{@prefix}-emoji-normal::v_v} to "逤"
+	set {{@prefix}-emoji-normal:::disappointed:} to "逥"
+	set {{@prefix}-emoji-normal::>_<} to "逦"
+	set {{@prefix}-emoji-normal:::fearful:} to "逧"
+	set {{@prefix}-emoji-normal:::cold_sweat:} to "逨"
+	set {{@prefix}-emoji-normal::>n<} to "逩"
+	set {{@prefix}-emoji-normal:::'(} to "逪"
 	#'
 	#double way
-	set {{@prefix}-emoji::;(} to "逫"
-	set {{@prefix}-emoji::D':} to "逫"
+	set {{@prefix}-emoji-normal::;(} to "逫"
+	set {{@prefix}-emoji-normal::D':} to "逫"
 	#'
-	set {{@prefix}-emoji:::'D} to "逬"
+	set {{@prefix}-emoji-normal:::'D} to "逬"
 	#'
-	set {{@prefix}-emoji::xnx} to "逭"
-	set {{@prefix}-emoji::x_x} to "逭"
-	set {{@prefix}-emoji::""_""} to "逭"
-	set {{@prefix}-emoji::OnO} to "逮"
-	set {{@prefix}-emoji:::neckbeard:} to "逯"
-	set {{@prefix}-emoji::>-<} to "逰"
-	set {{@prefix}-emoji::>:(} to "週"
-	set {{@prefix}-emoji::>>:(} to "進"
-	set {{@prefix}-emoji:::triumph:} to "逳"
-	set {{@prefix}-emoji:::sleepy:} to "逴"
-	set {{@prefix}-emoji:::)P} to "逵"
-	set {{@prefix}-emoji::Apple:x} to "逶"
-	set {{@prefix}-emoji::8)} to "逷"
-	set {{@prefix}-emoji::xox} to "逸"
-	set {{@prefix}-emoji:::imp:} to "逹"
-	set {{@prefix}-emoji:::smiling_imp:} to "逺"
-	set {{@prefix}-emoji:::|} to "逻"
-	set {{@prefix}-emoji:::no_mouth:} to "逼"
-	set {{@prefix}-emoji::0:)} to "逽"
-	set {{@prefix}-emoji::(8]} to "逾"
-	set {{@prefix}-emoji:::yellow_heart:} to "逿"
-	set {{@prefix}-emoji:::blue_heart:} to "遀"
-	set {{@prefix}-emoji:::purple_heart:} to "遁"
-	set {{@prefix}-emoji::<3} to "遂"
-	set {{@prefix}-emoji:::green_heart:} to "遃"
-	set {{@prefix}-emoji::</3:} to "遄"
-	set {{@prefix}-emoji:::heartbeat:} to "遅"
-	set {{@prefix}-emoji::<333} to "遆"
-	set {{@prefix}-emoji::<33} to "遇"
-	set {{@prefix}-emoji::<3<3} to "遈"
-	set {{@prefix}-emoji::-<3->} to "遉"
-	set {{@prefix}-emoji::""<3""} to "遊"
-	set {{@prefix}-emoji::""""} to "運"
-	set {{@prefix}-emoji::[X]} to "遌"
-	set {{@prefix}-emoji::[""X""]} to "遍"
-	set {{@prefix}-emoji::[O]} to "過"
-	set {{@prefix}-emoji:::explo} to "遏"
-	set {{@prefix}-emoji:::anger:} to "遐"
-	set {{@prefix}-emoji::[!]} to "遑"
-	set {{@prefix}-emoji::[?]} to "遒"
-	set {{@prefix}-emoji::[!""]} to "道"
-	set {{@prefix}-emoji::[?""]} to "達"
-	set {{@prefix}-emoji::zzz} to "違"
-	set {{@prefix}-emoji:::dash:} to "遖"
-	set {{@prefix}-emoji:::sweat_drops:} to "遗"
-	set {{@prefix}-emoji:::notes:} to "遘"
-	set {{@prefix}-emoji:::musical_note:} to "遙"
-	set {{@prefix}-emoji:::fire:} to "遚"
-	set {{@prefix}-emoji:::shit:} to "遛"
-	set {{@prefix}-emoji:::miam:} to "透"
-	set {{@prefix}-emoji:::+} to "遡"
-	set {{@prefix}-emoji:::-} to "遢"
-	set {{@prefix}-emoji:::$} to "遜"
-	set {{@prefix}-emoji:::oklm} to "遣"
+	set {{@prefix}-emoji-normal::xnx} to "逭"
+	set {{@prefix}-emoji-normal::x_x} to "逭"
+	set {{@prefix}-emoji-normal::""_""} to "逭"
+	set {{@prefix}-emoji-normal::OnO} to "逮"
+	set {{@prefix}-emoji-normal:::neckbeard:} to "逯"
+	set {{@prefix}-emoji-normal::>-<} to "逰"
+	set {{@prefix}-emoji-normal::>:(} to "週"
+	set {{@prefix}-emoji-normal::>>:(} to "進"
+	set {{@prefix}-emoji-normal:::triumph:} to "逳"
+	set {{@prefix}-emoji-normal:::sleepy:} to "逴"
+	set {{@prefix}-emoji-normal:::)P} to "逵"
+	set {{@prefix}-emoji-normal::Apple:x} to "逶"
+	set {{@prefix}-emoji-normal::8)} to "逷"
+	set {{@prefix}-emoji-normal::xox} to "逸"
+	set {{@prefix}-emoji-normal:::imp:} to "逹"
+	set {{@prefix}-emoji-normal:::smiling_imp:} to "逺"
+	set {{@prefix}-emoji-normal:::|} to "逻"
+	set {{@prefix}-emoji-normal:::no_mouth:} to "逼"
+	set {{@prefix}-emoji-normal::0:)} to "逽"
+	set {{@prefix}-emoji-normal::(8]} to "逾"
+	set {{@prefix}-emoji-normal:::yellow_heart:} to "逿"
+	set {{@prefix}-emoji-normal:::blue_heart:} to "遀"
+	set {{@prefix}-emoji-normal:::purple_heart:} to "遁"
+	set {{@prefix}-emoji-normal::<3} to "遂"
+	set {{@prefix}-emoji-normal:::green_heart:} to "遃"
+	set {{@prefix}-emoji-normal::</3:} to "遄"
+	set {{@prefix}-emoji-normal:::heartbeat:} to "遅"
+	set {{@prefix}-emoji-normal::<333} to "遆"
+	set {{@prefix}-emoji-normal::<33} to "遇"
+	set {{@prefix}-emoji-normal::<3<3} to "遈"
+	set {{@prefix}-emoji-normal::-<3->} to "遉"
+	set {{@prefix}-emoji-normal::""<3""} to "遊"
+	set {{@prefix}-emoji-normal::""""} to "運"
+	set {{@prefix}-emoji-normal::[X]} to "遌"
+	set {{@prefix}-emoji-normal::[""X""]} to "遍"
+	set {{@prefix}-emoji-normal::[O]} to "過"
+	set {{@prefix}-emoji-normal:::explo} to "遏"
+	set {{@prefix}-emoji-normal:::anger:} to "遐"
+	set {{@prefix}-emoji-normal::[!]} to "遑"
+	set {{@prefix}-emoji-normal::[?]} to "遒"
+	set {{@prefix}-emoji-normal::[!""]} to "道"
+	set {{@prefix}-emoji-normal::[?""]} to "達"
+	set {{@prefix}-emoji-normal::zzz} to "違"
+	set {{@prefix}-emoji-normal:::dash:} to "遖"
+	set {{@prefix}-emoji-normal:::sweat_drops:} to "遗"
+	set {{@prefix}-emoji-normal:::notes:} to "遘"
+	set {{@prefix}-emoji-normal:::musical_note:} to "遙"
+	set {{@prefix}-emoji-normal:::fire:} to "遚"
+	set {{@prefix}-emoji-normal:::shit:} to "遛"
+	set {{@prefix}-emoji-normal:::miam:} to "透"
+	set {{@prefix}-emoji-normal:::+} to "遡"
+	set {{@prefix}-emoji-normal:::-} to "遢"
+	set {{@prefix}-emoji-normal:::$} to "遜"
+	set {{@prefix}-emoji-normal:::oklm} to "遣"
+	if file existance of "{@file}" is true:
+		delete file "{@file}"
+	wait 1 tick
+	create file "{@file}"
+	wait 1 tick
+	write "Emojis:" at line 1 to file "{@file}"
+	loop {{@prefix}-emoji-normal::*}
+		set {_line} to line count of file "{@file}"
+		set {_perm} to "%{{@perms}.emoji.perm-emoji-normal}%"
+		replace all "<emoji-name>" with "%loop-index%" in {_perm}
+		write " - %loop-index%  permission: %{_perm}%" at line {_line} to file "{@file}"
+	write "##" at line {_line}+1 to file "{@file}"
+	if {{@prefix}.emoji.emoji-nsfw} is true:
+		set {{@prefix}-emoji-nsfw:::cut} to "遠"
+		set {{@prefix}-emoji-nsfw:::bombe} to "遝"
+		set {{@prefix}-emoji-nsfw:::gun} to "遞"
+		write "NSFW emojis:" at line {_line}+2 to file "{@file}"
+		write "##" at line {_line}+3 to file "{@file}"
+		loop {{@prefix}-emoji-nsfw::*}
+			set {_line} to line count of file "{@file}"
+			set {_perm} to "%{{@perms}.emoji.perm-emoji-nsfw}%"
+			replace all "<emoji-name>" with "%loop-index%" in {_perm}
+			write " - %loop-index%  permission: %{_perm}%" at line {_line} to file "{@file}"
 #
