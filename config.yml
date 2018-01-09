@@ -168,7 +168,7 @@ configs:
             module-bungee: true
             
             #    Port de communication pour les fonctions SkUltimateChat (Mettre un port non utilisé)
-            socket-port: 25570
+            socket-port: 25000
             
             #    Permet de pister les joueur selon leur serveur lorsqu'ils sont online.
             player-bungee: true
