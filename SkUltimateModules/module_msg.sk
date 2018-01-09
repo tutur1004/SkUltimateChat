@@ -9,7 +9,7 @@ function SendPrivateMessage(p: offline player, name: offline player, send: boole
 		if {{@prefix}.emoji.chat.%{_p}%} is true:
 			loop {{@prefix}-emoji::*}:
 				replace all loop-index with loop-value in {_message}
-	set {_name} to displayprefix({_name})
+	set {_name} to displayname({_name})
 	if {_send} is true:
 		send "&6[&c%{_name}%&6-->&aMoi&6] &r%{_message}%" to {_p}
 	else:
