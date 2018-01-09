@@ -8,7 +8,7 @@ options:
 
 websocket server "SkUltimateChat":
 	on message:
-		set {_request::*} to "%event-string%" split at "&|splitredis|&"
+		set {_request::*} to event-string split at "&|splitredis|&"
 		if {_request::1} is "LastSQL":
 			if {_request::2} is not "%{{@prefix}-server-name}%":
 				set {_sql} to "SELECT * FROM `SkUltimateChat` WHERE `id` = '%{_request::3}%'"
