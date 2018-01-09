@@ -162,6 +162,9 @@ configs:
             #    Active ou désactive le module bungeecord --> !!! Nécéssite plus d'addons !!!
             module-bungee: true
             
+            #    Port de communication pour les fonctions SkUltimateChat (Mettre un port non utilisé)
+            socket-port: 25570
+            
             #    Permet de pister les joueur selon leur serveur lorsqu'ils sont online.
             player-bungee: true
             
