@@ -45,6 +45,11 @@ configs:
             #    Renseignez ici le nom de votre plugin de prefix, liste des plugins supportés sur le poste officiel.
             #    (Contactez @tutur1004 pour ajouter la compatibilitée pour vos plugins)
             plugin-name: pex
+            
+            permissions:
+                #    Commande /prefix-refresh, régenère tous les préfix des joueurs connectés
+                #    Type: Modération
+                cmd-prefix-refresh: cmd.prefix.refresh
         chat:
             #    Active ou désactive le module chat (Ce module ne peut être désactivé)
             module-chat: false
