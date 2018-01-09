@@ -5,6 +5,18 @@ options:
 #
 
 #	Le module prefix doit être chargé en 1er pour pouvoir load la function
+displayname(player: player):: text:
+	set {_sql} to "SELECT * FROM `SkUltimateChat-User` WHERE `name` = '%{_player}%'"
+	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
+	if {_output::nick::*} is not "no-nick":
+		if {_output::prefix::*} is not "no-prefix":
+			set {_playername} to "%{_output::prefix::*}% %{_output::nick::*}%"
+		else:
+			set {_playername} to "&7%{_output::nick::*}%"
+	else if {_output::prefix::*} is not "no-prefix":
+		set {_playername} to "&7%{_output::prefix::*}% %{_player}%"
+	return {_playername}
+#
 
 #	Mise en format d'un message
 function SendMessage(p: player, playername: text, message: text, id: integer):
@@ -30,18 +42,7 @@ function ResetSingleChat(p: player, id: integer):
 	set {_message} to "%{_output::message::*}%"
 	#	Préparations de base du message
 	replace all ":!S:" in {_message} with "'"
-	#	Display name
-	set {_prefix} to prefix({_player})
-	set {_sql} to "SELECT `nick` FROM `SkUltimateChat-User` WHERE `name` = '%{_player}%'"
-	execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
-	set {_playername} to "%{_output::nick::*}%"
-	if {_playername} is "no-nick":
-		set {_playername} to {_player}
-	if {_prefix} is not "":
-		set {_player} to "%{_prefix}% %{_playername}%"
-	else:
-		set {_player} to "%{_playername}%"
-	#	/Display name
+	set {_playername} to displayprefix(player)
 	if {_player} has permission "%{{@perms}.mods.perm.colored-chat}%":
 		set {_message} to coloured {_message}
 	#	Check du type de message, si MP on compte differement	
@@ -145,15 +146,7 @@ on chat:
 		call custom event "send new SQL by id" to details {_id::*}
 		replace all ":!S:" in {_message} with "'"
 		replace all ":!T:" in {_message} with """"
-		set {_sql} to "SELECT `nick` FROM `SkUltimateChat-User` WHERE `name` = '%player%'"
-		execute unsafe {_sql} in {{@prefix}-sql} and store the result in {_output::*}
-		set {_playername} to "%{_output::nick::*}%"
-		if {_playername} is "no-nick":
-			set {_playername} to player
-		if {_prefix} is not "":
-			set {_player} to "%{_prefix}% %{_playername}%"
-		else:
-			set {_player} to "%{_playername}%"
+		set {_playername} to displayprefix(player)
 		if player has permission "%{{@perms}.mods.perm.colored-chat}%":
 			set {_message} to coloured {_message}
 		send "&r[CHAT] %uncoloured {_playername}% &r> %uncoloured {_message}%" to console
