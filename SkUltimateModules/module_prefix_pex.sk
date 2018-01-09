@@ -1,22 +1,35 @@
-
+options:
+	prefix: SkUltimateChat
+	prefix-msg: %{SkUltimateChat-commandes-prefix}%
+	perms: perm.%{SkUltimateChat-permissions-prefix}%
+#
 #	Module de prefix pour pex
 #	Il faut SkAction !
 
+function prefix(p: {_p}):
+	set {_prefix} to {_p}'s prefix
+	#'
+	set {_sql} to "UPDATE `SkUltimateChat-User` SET `prefix` = '%{_prefix}%' WHERE `SkUltimateChat-User`.`name` = '%{_{_p}}%'"
+	execute unsafe {_sql} in {{@prefix}-sql}
 #
 
 on join:
-	set {SkUltimateChat.prefix.pex.%{_p}%} to player's prefix
-#	'
+	SkUltimateChatprefix(player)
+#
 
 on quit:
-	set {SkUltimateChat.prefix.pex.%{_p}%} to player's prefix
-#	'
+	SkUltimateChatprefix(player)
+#
 
-function prefix(p: offline player) :: text:
-	if {_p} is online:
-		set {_prefix} to {_p}'s prefix
-		#	'
-	else:
-		set {_prefix} to {SkUltimateChat.prefix.pex.%{_p}%}
-	return {_prefix}
+every 5 minutes:
+	loop all players:
+		SkUltimateChatprefix(loop-player)
+#
+
+command /prefix-refresh:
+	permission: {{@perms}.player-prefix.perm.cmd-prefix-refresh}
+	permission message: "{@prefix-msg} &cCommande non autorisée !"
+	trigger:
+		loop all players:
+			SkUltimateChatprefix(loop-player)
 #
