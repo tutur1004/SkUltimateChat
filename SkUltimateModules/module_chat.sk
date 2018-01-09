@@ -42,7 +42,7 @@ function ResetSingleChat(p: player, id: integer):
 	set {_message} to "%{_output::message::*}%"
 	#	Préparations de base du message
 	replace all ":!S:" in {_message} with "'"
-	set {_playername} to displayprefix(player)
+	set {_playername} to displayname(player)
 	if {_player} has permission "%{{@perms}.mods.perm.colored-chat}%":
 		set {_message} to coloured {_message}
 	#	Check du type de message, si MP on compte differement	
@@ -146,7 +146,7 @@ on chat:
 		call custom event "send new SQL by id" to details {_id::*}
 		replace all ":!S:" in {_message} with "'"
 		replace all ":!T:" in {_message} with """"
-		set {_playername} to displayprefix(player)
+		set {_playername} to displayname(player)
 		if player has permission "%{{@perms}.mods.perm.colored-chat}%":
 			set {_message} to coloured {_message}
 		send "&r[CHAT] %uncoloured {_playername}% &r> %uncoloured {_message}%" to console
