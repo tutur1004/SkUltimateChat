@@ -25,7 +25,8 @@ function SendMessage(p: player, playername: text, message: text, id: integer):
 				replace all loop-index with loop-value in {_message}
 	if {{@prefix}.chat.mods.%{_p}%} is true:
 		replace all """" in {_message} with "“"
-		execute console command "tellraw %{_p}% [{""text"":""%{_playername}% &b» &r%{_message}%"",""color"":""gray""},{""text"":"" [KICK] "",""color"":""red"",""bold"":true,""clickEvent"":{""action"":""run_command"",""value"":""/kick %{_player}%""}},{""text"":""[X] "",""color"":""red"",""bold"":true,""clickEvent"":{""action"":""run_command"",""value"":""rem-msg-id %{_id}%""}}]"
+		# execute console command "tellraw %{_p}% [{""text"":""%{_playername}% &b» &r%{_message}%"",""color"":""gray""},{""text"":"" [KICK] "",""color"":""red"",""bold"":true,""clickEvent"":{""action"":""run_command"",""value"":""/kick %{_player}%""}},{""text"":""[X] "",""color"":""red"",""bold"":true,""clickEvent"":{""action"":""run_command"",""value"":""rem-msg-id %{_id}%""}}]"
+		send "<reset>%{_playername}% <cyan>» <reset>%{_message}%<command:/kick %{_player}%> [KICK] <reset><command:rem-msg-id %{_id}%> [X]<reset>" to {_p}
 	else:
 		send "%{_playername}% &b» &r%{_message}%" to {_p}
 #
@@ -71,7 +72,8 @@ function ResetSingleChat(p: player, id: integer):
 						loop {{@prefix}-emoji::*}:
 							replace all loop-index with loop-value in {_message}
 				replace all ":!T:" in {_message} with "“"
-				execute console command "tellraw %{_p}% [{""text"":""<Message de %{_player}% supprimé par %{_supprime}%>"",""color"":""red"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""%{_message}%""}]}}}]"
+				# execute console command "tellraw %{_p}% [{""text"":""<Message de %{_player}% supprimé par %{_supprime}%>"",""color"":""red"",""hoverEvent"":{""action"":""show_text"",""value"":{""text"":"""",""extra"":[{""text"":""%{_message}%""}]}}}]"
+				send "<tooltip:%{_message}%>&c<Message de %{_player}% supprimé par %{_supprime}%><reset>" to {_p}
 			else:
 				send "&c<Message de %{_player}% supprimé par %{_supprime}%>" to {_p}
 #
