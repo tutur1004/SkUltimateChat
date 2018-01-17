@@ -119,9 +119,8 @@ on chat:
 	if "%{_message}%" does not start with "rem-msg-id ":
 		
 		#	Event d'ajout de message
-		
-		if player does not have permission "%{{@perms}.mods.perm.cmd-chatmods}%":
-			send "{@prefix-msg} <light red>Cette commande est réservée au modérateurs."
+		if number of uppercase chars in {_message} > length of {_message} / 2:
+			convert text {_message} to lowercase
 		#	On annule le message (pour le formater soit même)
 		if {{@prefix}.censure.module-censure} is true:
 			if player does not have permission "%{{@perms}.censure.perm.cmd-chatmods}%":
